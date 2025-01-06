@@ -1,36 +1,35 @@
 package com.example.demo.entity;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "categoria")
-public class Categoria {
-
+public class categoria {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int idCategoria;
 
 	@Column(name = "nombre", length = 45)
-	private String nombre_Categoria;
+	private String nombre;
 
-	@Column(name = "estado", length = 1)
-	private String estado;
+	@Column(name = "estado")
+	private Boolean estado;
 
-	public Categoria() {
-		// TODO Auto-generated constructor stub
-	}
+	@OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+	private List<producto> productos;
 
-	public Categoria(int idCategoria, String nombre_Categoria, String estado) {
-		super();
-		this.idCategoria = idCategoria;
-		this.nombre_Categoria = nombre_Categoria;
-		this.estado = estado;
+	public categoria() {
+
 	}
 
 	public int getIdCategoria() {
@@ -41,20 +40,28 @@ public class Categoria {
 		this.idCategoria = idCategoria;
 	}
 
-	public String getNombre_Categoria() {
-		return nombre_Categoria;
+	public String getNombre() {
+		return nombre;
 	}
 
-	public void setNombre_Categoria(String nombre_Categoria) {
-		this.nombre_Categoria = nombre_Categoria;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 
-	public String getEstado() {
+	public Boolean getEstado() {
 		return estado;
 	}
 
-	public void setEstado(String estado) {
+	public void setEstado(Boolean estado) {
 		this.estado = estado;
+	}
+
+	public List<producto> getProductos() {
+		return productos;
+	}
+
+	public void setProductos(List<producto> productos) {
+		this.productos = productos;
 	}
 
 }

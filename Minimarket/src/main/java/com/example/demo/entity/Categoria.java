@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "categoria")
-public class categoria {
+public class Categoria {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -26,9 +26,9 @@ public class categoria {
 	private Boolean estado;
 
 	@OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
-	private List<producto> productos;
+	private List<Producto> productos;
 
-	public categoria() {
+	public Categoria() {
 
 	}
 
@@ -56,11 +56,11 @@ public class categoria {
 		this.estado = estado;
 	}
 
-	public List<producto> getProductos() {
+	public List<Producto> getProductos() {
 		return productos;
 	}
 
-	public void setProductos(List<producto> productos) {
+	public void setProductos(List<Producto> productos) {
 		this.productos = productos;
 	}
 

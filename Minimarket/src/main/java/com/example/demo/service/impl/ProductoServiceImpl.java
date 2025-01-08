@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.entity.categoria;
-import com.example.demo.entity.producto;
+import com.example.demo.entity.Categoria;
+import com.example.demo.entity.Producto;
 import com.example.demo.repository.ProductoRepository;
 import com.example.demo.service.ProductoService;
 
@@ -19,17 +19,17 @@ public class ProductoServiceImpl implements ProductoService {
     private ProductoRepository productoRepository;
 
     @Override
-    public List<producto> ListarProducto() {
+    public List<Producto> ListarProducto() {
         return productoRepository.findAll();
     }
 
     @Override
-    public producto buscarProducto(int id) {
+    public Producto buscarProducto(int id) {
         return productoRepository.findById(id).orElse(null);
     }
 
     @Override
-    public producto guardarProducto(producto producto) {
+    public Producto guardarProducto(Producto producto) {
         return productoRepository.save(producto);
     }
 
@@ -39,12 +39,12 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public producto editarProducto(producto producto) {
+    public Producto editarProducto(Producto producto) {
         return productoRepository.save(producto);
     }
 
     @Override
-    public List<categoria> ListarCategoria(boolean estado) {
+    public List<Categoria> ListarCategoria(boolean estado) {
         return productoRepository.ListarActivo(estado);
     }
 

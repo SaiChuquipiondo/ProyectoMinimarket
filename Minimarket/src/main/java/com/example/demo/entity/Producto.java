@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "producto")
-public class producto {
+public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +36,9 @@ public class producto {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_categoria")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private categoria categoria;
+    private Categoria categoria;
 
-    public producto() {
+    public Producto() {
 
     }
 
@@ -82,11 +82,11 @@ public class producto {
         this.estado = estado;
     }
 
-    public categoria getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(categoria categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 

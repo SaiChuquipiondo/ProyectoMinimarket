@@ -7,16 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.entity.categoria;
-import com.example.demo.entity.producto;
+import com.example.demo.entity.Categoria;
+import com.example.demo.entity.Producto;
 
 @Repository("productoRepository")
-public interface ProductoRepository extends JpaRepository<producto, Integer> {
+public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
     @Query(value = "select * from categoria where estado = :estado", nativeQuery = true)
-    List<categoria> ListarActivo(@Param("estado") Boolean estado);
+    List<Categoria> ListarActivo(@Param("estado") Boolean estado);
 
     @Query(value = "select * from producto where id_categoria = :categoriaid", nativeQuery = true)
-    List<producto> findByCategoriaId(@Param("categoriaid") int categoriaid);
+    List<Producto> findByCategoriaId(@Param("categoriaid") int categoriaid);
 
 }

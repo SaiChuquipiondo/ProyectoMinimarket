@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.entity.producto;
+import com.example.demo.entity.Producto;
 import com.example.demo.service.ProductoService;
 
 @Controller
@@ -26,7 +26,7 @@ public class ProductoController {
 
     @GetMapping("/Listar")
     public String ListarProducto(Model model) {
-        List<producto> listarProductos = productoService.ListarProducto();
+        List<Producto> listarProductos = productoService.ListarProducto();
         model.addAttribute("producto", listarProductos);
         return "Admin/Producto/ListarProductos";
     }
@@ -34,13 +34,13 @@ public class ProductoController {
     @GetMapping("/Agregar")
     public ModelAndView AgregarProducto() {
         ModelAndView mav = new ModelAndView("Admin/Producto/AgregarProducto");
-        mav.addObject("producto", new producto());
+        mav.addObject("producto", new Producto());
         mav.addObject("categorias", productoService.ListarCategoria(true));
         return mav;
     }
 
     @PostMapping("/Guardar")
-    public String guardarProducto(@ModelAttribute("producto") producto producto) {
+    public String guardarProducto(@ModelAttribute("producto") Producto producto) {
         productoService.guardarProducto(producto);
         return "redirect:/Producto/Listar";
     }
@@ -48,14 +48,14 @@ public class ProductoController {
     @GetMapping("/Editar/{id}")
     public ModelAndView EditarProducto(@PathVariable("id") int id) {
         ModelAndView mav = new ModelAndView("Admin/Producto/EditarProducto");
-        producto producto = productoService.buscarProducto(id);
+        Producto producto = productoService.buscarProducto(id);
         mav.addObject("producto", producto);
         mav.addObject("categorias", productoService.ListarCategoria(true));
         return mav;
     }
 
     @PostMapping("/Editar/{id}")
-    public String editarProducto(@PathVariable("id") int id, @ModelAttribute("producto") producto producto) {
+    public String editarProducto(@PathVariable("id") int id, @ModelAttribute("producto") Producto producto) {
         producto.setIdProducto(id);
         productoService.editarProducto(producto);
         return "redirect:/Producto/Listar";

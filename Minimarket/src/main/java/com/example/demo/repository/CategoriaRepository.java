@@ -9,13 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.entity.categoria;
+import com.example.demo.entity.Categoria;
 
 @Repository("categoriaRepository")
-public interface CategoriaRepository extends JpaRepository<categoria, Integer> {
+public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
 
 	@Query(value = "select c.id, c.nombre, c.estado from categoria c", nativeQuery = true)
-	List<categoria> listar();
+	List<Categoria> listar();
 
 	@Modifying
 	@Transactional

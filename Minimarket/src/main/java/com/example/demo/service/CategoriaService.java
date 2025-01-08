@@ -2,17 +2,17 @@ package com.example.demo.service;
 
 import java.util.List;
 
-import com.example.demo.entity.categoria;
+import com.example.demo.entity.Categoria;
 
 public interface CategoriaService {
 
-	public abstract List<categoria> ListarCategoria();
+	public abstract List<Categoria> ListarCategoria();
 
-	public abstract void agregarCategoria(categoria categoria);
+	public abstract void agregarCategoria(Categoria categoria);
 
-	public abstract categoria buscarCategoria(int id);
+	public abstract Categoria buscarCategoria(int id);
 
-	public abstract void editarCategoria(categoria categoria);
+	public abstract void editarCategoria(Categoria categoria);
 
 	public abstract void eliminarCategoria(int id);
 

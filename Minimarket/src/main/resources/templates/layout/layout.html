@@ -44,12 +44,25 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                     <i class="fas fa-user-plus me-2"></i>Agregar Empleado
                 </a>
             </li>
+        </ul>
+        <!-- Clientes -->
+        <a href="#clientesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+            <i class="fas fa-user-friends me-2"></i>Clientes
+        </a>
+        <ul id="clientesSubmenu" class="collapse list-unstyled ms-3">
             <li>
-                <a href="/Empleados/Control" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-calendar-check me-2"></i>Control de Asistencia
+                <a th:href="@{/Cliente/Listar}" class="list-group-item list-group-item-action bg-transparent">
+                    <i class="fas fa-users me-2"></i>Listado de Clientes
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/Cliente/Agregar}" class="list-group-item list-group-item-action bg-transparent">
+                    <i class="fas fa-user-plus me-2"></i>Agregar Cliente
                 </a>
             </li>
         </ul>
+        
+    
     
         <!-- Inventario -->
         <a href="#inventarioSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
@@ -67,11 +80,12 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 </a>
             </li>
             <li>
-                <a href="/Inventario/ControlStock" class="list-group-item list-group-item-action bg-transparent">
+                <a th:href="@{/Producto/ControldeStock}" class="list-group-item list-group-item-action bg-transparent">
                     <i class="fas fa-clipboard-list me-2"></i>Control de Stock
                 </a>
             </li>
         </ul>
+        
     
         <!-- Reportes -->
         <a href="#reportesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">

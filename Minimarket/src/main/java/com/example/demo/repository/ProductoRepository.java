@@ -19,4 +19,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     @Query(value = "select * from producto where id_categoria = :categoriaid", nativeQuery = true)
     List<Producto> findByCategoriaId(@Param("categoriaid") int categoriaid);
 
+    List<Producto> findByStockBetween(int stock1, int stock2);
+
 }

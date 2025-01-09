@@ -48,4 +48,9 @@ public class ProductoServiceImpl implements ProductoService {
         return productoRepository.ListarActivo(estado);
     }
 
+    @Override
+    public List<Producto> buscarProductoStock(int stock1, int stock2) {
+        return productoRepository.findByStockBetween(stock1, stock2);
+    }
+
 }

@@ -17,4 +17,6 @@ public interface ProductoService {
     public abstract void eliminarProducto(int id);
 
     public abstract List<Categoria> ListarCategoria(boolean estado);
+
+    public abstract List<Producto> buscarProductoStock(int stock1, int stock2);
 }

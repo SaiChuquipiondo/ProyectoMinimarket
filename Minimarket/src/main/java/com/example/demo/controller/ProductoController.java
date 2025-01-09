@@ -67,4 +67,11 @@ public class ProductoController {
         return "redirect:/Producto/Listar";
     }
 
+    @GetMapping("/ControldeStock")
+    public String ControldeStock(Model model) {
+        List<Producto> listarProductos = productoService.buscarProductoStock(0, 10);
+        model.addAttribute("producto", listarProductos);
+        return "Admin/Producto/ControldeStock";
+    }
+
 }

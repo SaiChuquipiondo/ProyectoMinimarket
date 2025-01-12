@@ -58,13 +58,18 @@ public class PersonalController {
     public String editarPersonal(@PathVariable("id") int id, @ModelAttribute("personal") Persona persona) {
         persona.setIdPersona(id);
         persona.setTipo(TipoPersona.PERSONAL);
+        persona.setEstado(true);
         personalService.actualizarPersonal(persona);
         return "redirect:/Personal/Listar";
     }
 
     @GetMapping("/Eliminar/{id}")
     public String eliminarPersonal(@PathVariable("id") int id) {
-        personalService.eliminarPersonal(id);
+        Persona personal = personalService.buscarPersonal(id);
+        if (personal != null) {
+            personal.setEstado(false);
+            personalService.actualizarPersonal(personal);
+        }
         return "redirect:/Personal/Listar";
     }
 }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head th:insert="~{layout/layout :: head}">
+    <meta charset="UTF-8">
+    <title>Usuarios</title>
+</head>
+<body>
+    <div class="container-fluid px-4" layout:fragment="page-content">
+        <div class="d-flex justify-content-between align-items-start mt-4 mb-3">
+            <div>
+                <h1>Editar Usuario</h1>
+                <p class="mt-2 text-muted fs-6 fw-bold" th:text="${usuario.persona.nombres + ' ' + usuario.persona.apellidos}"></p>
+            </div>
+            <a th:href="@{/Usuario/Listar}" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Regresar
+            </a>
+        </div>
+
+        <!-- Card para el formulario -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <form th:action="@{/Usuario/Editar/{id} (id = ${usuario.idUsuario})}" th:object="${usuario}" method="post">
+                    <!-- Personal asociado (solo lectura) -->
+                    <div class="mb-3">
+                        <label for="personal" class="form-label">Personal</label>
+                        <input type="text" class="form-control" id="personal" 
+                               th:value="${usuario.persona.nombres + ' ' + usuario.persona.apellidos}" readonly>
+                        <input type="hidden" th:field="*{persona.idPersona}" />
+                    </div>
+
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" th:field="*{username}" required placeholder="Ingresar Username">
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="text" class="form-control" id="password" th:field="*{password}" required placeholder="Ingresar Password">
+                    </div>
+
+                    <!-- Tipo de Usuario -->
+                    <div class="mb-3">
+                        <label for="tipos" class="form-label">Tipo de Usuario</label>
+                        <select class="form-control" id="tipos" th:field="*{tipoUsuario}">
+                            <option th:each="tipoUsuario : ${tipos}" 
+                                    th:value="${tipoUsuario.idTipoUsuario}" 
+                                    th:text="${tipoUsuario.nombre}" 
+                                    th:selected="${tipoUsuario.idTipoUsuario == usuario.tipoUsuario.idTipoUsuario}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Botón de guardar -->
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Guardar Usuario
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

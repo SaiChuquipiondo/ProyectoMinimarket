@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Persona;
 import com.example.demo.entity.TipoPersona;
+import com.example.demo.entity.Venta;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.service.ClienteService;
 
@@ -41,6 +42,11 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public void eliminarCliente(int id) {
         clienteRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Venta> listarVentasCliente(int id) {
+        return clienteRepository.listarVentasCliente(id);
     }
 
 }

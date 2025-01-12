@@ -41,6 +41,7 @@ public class ProductoController {
 
     @PostMapping("/Guardar")
     public String guardarProducto(@ModelAttribute("producto") Producto producto) {
+        producto.setEstado(true);
         productoService.guardarProducto(producto);
         return "redirect:/Producto/Listar";
     }
@@ -57,13 +58,18 @@ public class ProductoController {
     @PostMapping("/Editar/{id}")
     public String editarProducto(@PathVariable("id") int id, @ModelAttribute("producto") Producto producto) {
         producto.setIdProducto(id);
+        producto.setEstado(true);
         productoService.editarProducto(producto);
         return "redirect:/Producto/Listar";
     }
 
     @GetMapping("/Eliminar/{id}")
     public String eliminarProducto(@PathVariable("id") int id) {
-        productoService.eliminarProducto(id);
+        Producto producto = productoService.buscarProducto(id);
+        if (producto != null) {
+            producto.setEstado(false);
+            productoService.editarProducto(producto);
+        }
         return "redirect:/Producto/Listar";
     }
 

@@ -41,6 +41,7 @@ public class CategoriaController {
 
 	@PostMapping("/Guardar")
 	public String guardarCategoria(@ModelAttribute("categoria") Categoria categoria) {
+		categoria.setEstado(true);
 		categoriaService.agregarCategoria(categoria);
 		return "redirect:/Categoria/Listar";
 	}
@@ -56,6 +57,7 @@ public class CategoriaController {
 	@PostMapping("/Editar/{id}")
 	public String editarCategoria(@PathVariable("id") int id, @ModelAttribute("categoria") Categoria categoria) {
 		categoria.setIdCategoria(id);
+		categoria.setEstado(true);
 		categoriaService.actualizarEstadoCategoria(id, categoria.getEstado());
 		categoriaService.editarCategoria(categoria);
 		return "redirect:/Categoria/Listar";
@@ -63,7 +65,10 @@ public class CategoriaController {
 
 	@GetMapping("/Eliminar/{id}")
 	public String eliminarCategoria(@PathVariable("id") int id) {
-		categoriaService.eliminarCategoria(id);
+		Categoria categoria = categoriaService.buscarCategoria(id);
+		if (categoria != null) {
+			categoriaService.actualizarEstadoCategoria(id, false);
+		}
 		return "redirect:/Categoria/Listar";
 	}
 

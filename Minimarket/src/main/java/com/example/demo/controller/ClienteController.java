@@ -42,6 +42,7 @@ public class ClienteController {
     @PostMapping("/Guardar")
     public String Guardar(@ModelAttribute("cliente") Persona persona) {
         persona.setTipo(TipoPersona.CLIENTE);
+        persona.setEstado(true);
         clienteService.guardarCliente(persona);
         return "redirect:/Cliente/Listar";
     }
@@ -57,13 +58,27 @@ public class ClienteController {
     public String editarCliente(@PathVariable("id") int id, @ModelAttribute("cliente") Persona persona) {
         persona.setIdPersona(id);
         persona.setTipo(TipoPersona.CLIENTE);
+        persona.setEstado(true);
         clienteService.actualizarCliente(persona);
         return "redirect:/Cliente/Listar";
     }
 
+    @GetMapping("/Historial/{id}")
+    public ModelAndView Historial(@PathVariable("id") int id) {
+        ModelAndView mav = new ModelAndView("Clientes/Historial");
+        mav.addObject("cliente", clienteService.buscarCliente(id));
+        mav.addObject("ventas", clienteService.listarVentasCliente(id));
+        return mav;
+    }
+
     @GetMapping("/Eliminar/{id}")
     public String eliminarCliente(@PathVariable("id") int id) {
-        clienteService.eliminarCliente(id);
+        Persona cliente = clienteService.buscarCliente(id);
+        if (cliente != null) {
+            cliente.setEstado(false);
+            clienteService.actualizarCliente(cliente);
+        }
         return "redirect:/Cliente/Listar";
     }
+
 }

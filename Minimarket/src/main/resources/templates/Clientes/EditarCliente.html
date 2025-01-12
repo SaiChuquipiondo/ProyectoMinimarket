@@ -4,13 +4,13 @@
 	layout:decorate="~{layout/layout}">
 <head th:insert="~{layout/layout :: head}">
 <meta charset="UTF-8">
-<title>Categorias</title>
+<title>Editar Cliente</title>
 
 </head>
 <body>
 	<div class="container-fluid px-4" layout:fragment="page-content">
         <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-            <h1 class="mt-4">Agregar Cliente</h1>
+            <h1 class="mt-4">Editar Cliente</h1>
             <a th:href="@{/Cliente/Listar}" class="btn btn-primary btn-lg">
                 <i class="fas fa-arrow-left me-2"></i>Cancelar
             </a>
@@ -47,12 +47,6 @@
                         <input type="email" class="form-control" id="email" th:field="*{email}" required placeholder=" Ingresar Email">
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label">¿Está activa?</label>
-                        <div class="form-check form-switch">
-                            <input type="checkbox" class="form-check-input" id="activo" th:field="*{estado}" value="true">
-                        </div>
-                    </div>
 
                     <!-- Botón de guardar -->
                     <button type="submit" class="btn btn-primary">

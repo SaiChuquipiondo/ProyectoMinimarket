@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.demo.entity.Persona;
 import com.example.demo.entity.TipoPersona;
+import com.example.demo.entity.Venta;
 
 public interface ClienteService {
 
@@ -16,5 +17,7 @@ public interface ClienteService {
     public abstract Persona buscarCliente(int id);
 
     public abstract void eliminarCliente(int id);
+
+    public abstract List<Venta> listarVentasCliente(int id);
 
 }

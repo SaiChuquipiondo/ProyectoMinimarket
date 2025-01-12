@@ -41,13 +41,6 @@
                             <option th:each="categoria : ${categorias}" th:value="${categoria.idCategoria}" th:text="${categoria.nombre}"></option>
                         </select>
                     </div>
-                    <!-- Estado de la Categoría -->
-                    <div class="mb-3">
-                        <label class="form-label">¿Está activa?</label>
-                        <div class="form-check form-switch">
-                            <input type="checkbox" class="form-check-input" id="activo" th:field="*{estado}" value="true">
-                        </div>
-                    </div>
 
                     <!-- Botón de guardar -->
                     <button type="submit" class="btn btn-primary">

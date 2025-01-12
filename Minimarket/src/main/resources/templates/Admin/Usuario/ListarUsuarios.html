@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head th:insert="~{layout/layout :: head}">
+<meta charset="UTF-8">
+<title>Usuarios</title>
+
+</head>
+<body>
+	<div class="container-fluid px-4" layout:fragment="page-content">
+		<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+			<h1 class="mt-4">Usuarios</h1>
+			<a href="/Usuario/Agregar" class="btn btn-primary btn-lg">
+				<i class="fas fa-plus-circle me-2"></i>Agregar Usuario
+			</a>
+		</div>
+		<div class="card mb-4 shadow-sm">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered align-middle text-center shadow">
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Username</th>
+                                <th scope="col">Password</th>
+                                <th scope="col">Personal</th>
+								<th scope="col">Tipo Usuario</th>
+								<th scope="col">Estado</th>
+								<th scope="col">Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="Usuario : ${usuario}">
+                                <td scope="row" th:text="${Usuario.idUsuario}"></td>
+                                <td th:text="${Usuario.username}"></td>
+                                <td th:text="${Usuario.password}"></td>
+                                <td th:text="${Usuario.persona.nombres + ' ' + Usuario.persona.apellidos}"></td>
+                                <td th:text="${Usuario.tipoUsuario.nombre}"></td>
+								<td>
+									<span th:text="${Usuario.estado ? 'Activo' : 'Inactivo'}" 
+										  th:classappend="${Usuario.estado ? 'text-success' : 'text-danger'}"></span>
+								</td>
+								<td>
+									<a th:href="@{/Usuario/Editar/{id} (id = ${Usuario.idUsuario})}" class="btn btn-warning btn-sm">
+										<i class="fas fa-edit"></i> Editar
+									</a>
+									<a th:href="@{/Usuario/Eliminar/{id} (id = ${Usuario.idUsuario})}" class="btn btn-danger btn-sm">
+										<i class="fas fa-trash"></i> Eliminar
+									</a>
+								</td>
+							</tr>
+							<tr th:if="${usuario.empty}">
+								<td colspan="3" class="text-muted">No hay Usuarios disponibles.</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+</html>

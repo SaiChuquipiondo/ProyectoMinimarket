@@ -19,7 +19,10 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
         <!-- Sidebar -->
         <div class="bg-white" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold border-bottom">
-           <i class="fas fa-store me-2"></i>Minimarket Jyk
+           
+           <a  href="/Administrador/Home">
+           		<i class="fas fa-store me-2"></i>Minimarket Jyk
+           </a>
        </div>
        
             
@@ -85,6 +88,23 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 </a>
             </li>
         </ul>
+        <!-- Usuarios -->
+<a href="#usuariosSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+    <i class="fas fa-users me-2"></i>Usuarios
+</a>
+<ul id="usuariosSubmenu" class="collapse list-unstyled ms-3">
+    <li>
+        <a th:href="@{/Usuario/Listar}" class="list-group-item list-group-item-action bg-transparent">
+            <i class="fas fa-user me-2"></i>Lista de Usuarios
+        </a>
+    </li>
+    <li>
+        <a th:href="@{/Tipo/Listar}" class="list-group-item list-group-item-action bg-transparent">
+            <i class="fas fa-user-shield me-2"></i>Roles
+        </a>
+    </li>
+</ul>
+
         
     
         <!-- Reportes -->

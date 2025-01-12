@@ -1,5 +1,8 @@
 package com.example.demo.entity;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -42,6 +46,12 @@ public class Persona {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", length = 10)
     private TipoPersona tipo;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    private List<Venta> ventas;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    private List<usuario> usuarios;
 
     public Persona() {
 
@@ -117,6 +127,22 @@ public class Persona {
 
     public void setTipo(TipoPersona tipo) {
         this.tipo = tipo;
+    }
+
+    public List<Venta> getVentas() {
+        return ventas;
+    }
+
+    public void setVentas(List<Venta> ventas) {
+        this.ventas = ventas;
+    }
+
+    public List<usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 
 }

@@ -22,7 +22,7 @@ public class ProductoServiceImpl implements ProductoService {
     public List<Producto> ListarProducto() {
         return productoRepository.findAll();
     }
-
+    
     @Override
     public Producto buscarProducto(int id) {
         return productoRepository.findById(id).orElse(null);
@@ -53,4 +53,20 @@ public class ProductoServiceImpl implements ProductoService {
         return productoRepository.findByStockBetween(stock1, stock2);
     }
 
+    @Override
+    public List<Producto> findByNombreProducto(String nombreProducto) {
+        return productoRepository.findByNombreProducto(nombreProducto); // Buscar por nombre
+    }
+
+    @Override
+    public List<Producto> findByCategoriaId(int categoriaId) {
+        return productoRepository.findByCategoriaId(categoriaId); // Buscar solo por categoría
+    }
+
+    @Override
+    public List<Producto> findByCategoriaAndNombre(int categoriaId, String nombreProducto) {
+        return productoRepository.findByCategoriaIdAndNombre(categoriaId, "%" + nombreProducto + "%"); // Buscar por categoría y nombre
+    }
+    
+  
 }

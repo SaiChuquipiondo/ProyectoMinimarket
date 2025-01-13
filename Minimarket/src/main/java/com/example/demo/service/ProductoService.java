@@ -19,4 +19,11 @@ public interface ProductoService {
     public abstract List<Categoria> ListarCategoria(boolean estado);
 
     public abstract List<Producto> buscarProductoStock(int stock1, int stock2);
+
+    
+    public List<Producto> findByNombreProducto(String nombreProducto);
+
+    public List<Producto> findByCategoriaId(int categoriaId) ;
+
+    public List<Producto> findByCategoriaAndNombre(int categoriaId, String nombreProducto) ;
 }

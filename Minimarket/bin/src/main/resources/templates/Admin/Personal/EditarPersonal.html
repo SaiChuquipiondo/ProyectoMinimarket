@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head th:insert="~{layout/layout :: head}">
+<meta charset="UTF-8">
+<title>Categorias</title>
+
+</head>
+<body>
+	<div class="container-fluid px-4" layout:fragment="page-content">
+        <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+            <h1 class="mt-4">Agregar Personal</h1>
+            <a th:href="@{/Personal/Listar}" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Cancelar
+            </a>
+        </div>
+    
+        <!-- Card para el formulario -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <form th:action="@{/Personal/Editar/{id} (id = ${personal.idPersona})}"  th:object="${personal}" method="post">
+                    <!-- Nombre de la Categoría -->
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre del Personal</label>
+                        <input type="text" class="form-control" id="nombres" th:field="*{nombres}" required placeholder="Nombre del Personal">
+                        
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidos" class="form-label">Apellidos del Personal</label>
+                        <input type="text" class="form-control" id="apellidos" th:field="*{apellidos}" required placeholder="Apellidos del Personal">
+                        
+                    </div>
+                    <div class="mb-3">
+                        <label for="dni" class="form-label">Dni del Personal</label>
+                        <input type="text" length.max="8" length.min="8" class="form-control" id="dni" th:field="*{dni}" required placeholder="Dni del Personal">
+                    </div>
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label">Direccion del Personal</label>
+                        <input type="text" class="form-control" id="direccion" th:field="*{direccion}" required placeholder="Direccion del Personal">
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Telefono del Personal</label>
+                        <input type="tel" class="form-control" id="telefono" th:field="*{telefono}" required placeholder="Telefono del Personal">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email del Personal</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required placeholder=" Email del Personal">
+                    </div>
+
+                    <!-- Botón de guardar -->
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Guardar Personal
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

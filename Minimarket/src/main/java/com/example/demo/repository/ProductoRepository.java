@@ -20,5 +20,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     List<Producto> findByCategoriaId(@Param("categoriaid") int categoriaid);
 
     List<Producto> findByStockBetween(int stock1, int stock2);
+    
+   
 
+    @Query(value = "select * from producto p where (:nombreProducto = '' or p.nombre like concat('%', :nombreProducto, '%'))", nativeQuery = true)
+    List<Producto> findByNombreProducto(@Param("nombreProducto") String nombreProducto);
+
+    @Query(value = "select * from producto p where id_categoria = :categoriaid and (:nombreProducto = '' or p.nombre like concat('%', :nombreProducto, '%'))", nativeQuery = true)
+    List<Producto> findByCategoriaIdAndNombre(@Param("categoriaid") int categoriaId, @Param("nombreProducto") String nombreProducto);
 }

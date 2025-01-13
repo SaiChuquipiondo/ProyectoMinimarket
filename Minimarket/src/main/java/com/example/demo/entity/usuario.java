@@ -1,7 +1,10 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,37 +14,33 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario {
+public class usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int idUsuario;
+
     @Column(name = "username", length = 45)
     private String username;
+
     @Column(name = "password", length = 45)
     private String password;
 
-    @Column(name = "estado", length = 1)
-    private String estado;
+    @Column(name = "estado")
+    private Boolean estado;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_tipousuario")
-    private Tipo_Usuario tipo_Usuario;
-    @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private TipoUsuario tipoUsuario;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_persona")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Persona persona;
 
-    public Usuario() {
-    }
-
-    public Usuario(int idUsuario, String username, String password, String estado, Tipo_Usuario tipo_Usuario,
-            Persona persona) {
-        this.idUsuario = idUsuario;
-        this.username = username;
-        this.password = password;
-        this.estado = estado;
-        this.tipo_Usuario = tipo_Usuario;
-        this.persona = persona;
+    public usuario() {
     }
 
     public int getIdUsuario() {
@@ -68,20 +67,20 @@ public class Usuario {
         this.password = password;
     }
 
-    public String getEstado() {
+    public Boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Boolean estado) {
         this.estado = estado;
     }
 
-    public Tipo_Usuario getTipo_Usuario() {
-        return tipo_Usuario;
+    public TipoUsuario getTipoUsuario() {
+        return tipoUsuario;
     }
 
-    public void setTipo_Usuario(Tipo_Usuario tipo_Usuario) {
-        this.tipo_Usuario = tipo_Usuario;
+    public void setTipoUsuario(TipoUsuario tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
     }
 
     public Persona getPersona() {

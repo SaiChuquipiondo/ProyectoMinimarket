@@ -1,7 +1,10 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,35 +15,31 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "producto")
 public class Producto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int idProducto;
+
     @Column(name = "nombre", length = 45)
-    private String nombre_Producto;
+    private String nombre;
+
     @Column(name = "precio")
     private double precio;
+
     @Column(name = "stock")
     private int stock;
 
-    @Column(name = "estado", length = 1)
-    private String estado;
+    @Column(name = "estado")
+    private Boolean estado;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_categoria")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Categoria categoria;
 
     public Producto() {
-    }
 
-    public Producto(int idProducto, String nombre_Producto, double precio, int stock, String estado,
-            Categoria categoria) {
-        this.idProducto = idProducto;
-        this.nombre_Producto = nombre_Producto;
-        this.precio = precio;
-        this.stock = stock;
-        this.estado = estado;
-        this.categoria = categoria;
     }
 
     public int getIdProducto() {
@@ -51,12 +50,12 @@ public class Producto {
         this.idProducto = idProducto;
     }
 
-    public String getNombre_Producto() {
-        return nombre_Producto;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombre_Producto(String nombre_Producto) {
-        this.nombre_Producto = nombre_Producto;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public double getPrecio() {
@@ -75,16 +74,16 @@ public class Producto {
         this.stock = stock;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public String getEstado() {
+    public Boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Boolean estado) {
         this.estado = estado;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
     }
 
     public void setCategoria(Categoria categoria) {

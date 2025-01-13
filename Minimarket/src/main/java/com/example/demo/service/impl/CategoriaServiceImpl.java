@@ -7,40 +7,60 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Categoria;
+import com.example.demo.entity.Producto;
 import com.example.demo.repository.CategoriaRepository;
+import com.example.demo.repository.ProductoRepository;
 import com.example.demo.service.CategoriaService;
 
 @Service("categoriaService")
 public class CategoriaServiceImpl implements CategoriaService {
 
-    @Autowired
-    @Qualifier("categoriaRepository")
-    private CategoriaRepository categoriaRepository;
+	@Autowired
+	@Qualifier("categoriaRepository")
+	private CategoriaRepository categoriaRepository;
 
-    @Override
-    public List<Categoria> listarCategorias() {
-        return categoriaRepository.findAll();
-    }
+	@Autowired
+	@Qualifier("productoRepository")
+	private ProductoRepository productorRepository;
 
-    @Override
-    public Categoria buscarCategoria(int idCategoria) {
-        return categoriaRepository.findById(idCategoria).orElse(null);
+	@Override
+	public List<Categoria> ListarCategoria() {
+		return categoriaRepository.listar();
+	}
 
-    }
+	@Override
+	public void agregarCategoria(Categoria categoria) {
+		categoriaRepository.insertarCategoria(categoria.getNombre(), categoria.getEstado());
+	}
 
-    @Override
-    public Categoria guardarCategoria(Categoria categoria) {
-        return categoriaRepository.save(categoria);
-    }
+	@Override
+	public Categoria buscarCategoria(int id) {
+		return categoriaRepository.findById(id).orElse(null);
+	}
 
-    @Override
-    public Categoria actualizarCategoria(Categoria categoria) {
-        return categoriaRepository.save(categoria);
-    }
+	@Override
+	public void editarCategoria(Categoria categoria) {
+		categoriaRepository.editarCategoria(categoria.getIdCategoria(), categoria.getNombre(), categoria.getEstado());
+	}
 
-    @Override
-    public void eliminarCategoria(int idCategoria) {
-        categoriaRepository.deleteById(idCategoria);
-    }
+	@Override
+	public void eliminarCategoria(int id) {
+		categoriaRepository.deleteById(id);
+	}
+
+	@Override
+	public void actualizarEstadoCategoria(int id, boolean estado) {
+		Categoria categoria = categoriaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+		categoria.setEstado(estado);
+		categoriaRepository.save(categoria);
+
+		List<Producto> productos = productorRepository.findByCategoriaId(id);
+		productos.forEach(producto -> {
+			producto.setEstado(estado);
+			productorRepository.save(producto);
+		});
+
+	}
 
 }

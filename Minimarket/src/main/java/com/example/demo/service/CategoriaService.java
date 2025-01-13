@@ -6,13 +6,15 @@ import com.example.demo.entity.Categoria;
 
 public interface CategoriaService {
 
-    public abstract List<Categoria> listarCategorias();
+	public abstract List<Categoria> ListarCategoria();
 
-    public abstract Categoria buscarCategoria(int idCategoria);
+	public abstract void agregarCategoria(Categoria categoria);
 
-    public abstract Categoria guardarCategoria(Categoria categoria);
+	public abstract Categoria buscarCategoria(int id);
 
-    public abstract Categoria actualizarCategoria(Categoria categoria);
+	public abstract void editarCategoria(Categoria categoria);
 
-    public abstract void eliminarCategoria(int idCategoria);
+	public abstract void eliminarCategoria(int id);
+
+	public abstract void actualizarEstadoCategoria(int id, boolean estado);
 }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head th:insert="~{layout/layout :: head}">
+<meta charset="UTF-8">
+<title>Clientes</title>
+
+</head>
+<body>
+	<div class="container-fluid px-4" layout:fragment="page-content">
+		<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+			<h1 class="mt-4">Clientes</h1>
+		</div>
+		<div class="card mb-4 shadow-sm">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered align-middle text-center shadow">
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Nombres</th>
+                                <th scope="col">Apellidos</th>
+                                <th scope="col">Dni</th>
+								<th scope="col">Direccion</th>
+								<th scope="col">Telefono</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Estado</th>
+								<th scope="col">Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="cliente : ${cliente}">
+								<td scope="row" th:text="${cliente.idPersona}"></td>
+								<td th:text="${cliente.nombres}"></td>
+                                <td th:text="${cliente.apellidos}"></td>
+                                <td th:text="${cliente.dni}"></td>
+								<td th:text="${cliente.direccion}"></td>
+                                <td th:text="${cliente.telefono}"></td>
+                                <td th:text="${cliente.email}"></td>
+                                
+								<td>
+									<span th:text="${cliente.estado ? 'Activo' : 'Inactivo'}" 
+										  th:classappend="${cliente.estado ? 'text-success' : 'text-danger'}"></span>
+								</td>
+								<td>
+									<a th:href="@{/Cliente/Editar/{id} (id = ${cliente.idPersona})}" class="btn btn-warning btn-sm">
+										<i class="fas fa-edit"></i> Editar
+									</a>
+									<a th:href="@{/Cliente/Eliminar/{id} (id = ${cliente.idPersona})}" class="btn btn-danger btn-sm">
+										<i class="fas fa-trash"></i> Eliminar
+									</a>
+									<a th:href="@{/Cliente/Historial/{id} (id = ${cliente.idPersona})}" class="btn btn-outline-info btn-sm">
+										<i class="fas fa-history"></i> Historial
+									</a>
+									
+								</td>
+							</tr>
+							<tr th:if="${cliente.empty}">
+								<td colspan="4" class="text-muted">No hay Clientes disponibles.</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+</html>

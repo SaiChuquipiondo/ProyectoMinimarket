@@ -2,8 +2,11 @@ package com.example.demo.entity;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,35 +17,32 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "venta")
 public class Venta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int idVenta;
-    @Column(name = "precio_total")
-    private double precio_Total;
-    @Column(name = "fecha_registro")
-    private Date fecha_Registro;
-    @Column(name = "estado", length = 1)
-    private String estado;
 
-    @ManyToOne
-    @JoinColumn(name = "id_cliente")
-    private Persona persona;
-    @ManyToOne
+    @Column(name = "precio_total")
+    private double precioTotal;
+
+    @Column(name = "fecha_registro")
+    private Date fechaRegistro;
+
+    @Column(name = "estado")
+    private Boolean estado;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_cliente")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Persona persona;
 
     public Venta() {
-    }
-
-    public Venta(int idVenta, double precio_Total, Date fecha_Registro, String estado, Persona persona,
-            Usuario usuario) {
-        this.idVenta = idVenta;
-        this.precio_Total = precio_Total;
-        this.fecha_Registro = fecha_Registro;
-        this.estado = estado;
-        this.persona = persona;
-        this.usuario = usuario;
     }
 
     public int getIdVenta() {
@@ -53,28 +53,36 @@ public class Venta {
         this.idVenta = idVenta;
     }
 
-    public double getPrecio_Total() {
-        return precio_Total;
+    public double getPrecioTotal() {
+        return precioTotal;
     }
 
-    public void setPrecio_Total(double precio_Total) {
-        this.precio_Total = precio_Total;
+    public void setPrecioTotal(double precioTotal) {
+        this.precioTotal = precioTotal;
     }
 
-    public Date getFecha_Registro() {
-        return fecha_Registro;
+    public Date getFechaRegistro() {
+        return fechaRegistro;
     }
 
-    public void setFecha_Registro(Date fecha_Registro) {
-        this.fecha_Registro = fecha_Registro;
+    public void setFechaRegistro(Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
-    public String getEstado() {
+    public Boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Boolean estado) {
         this.estado = estado;
+    }
+
+    public usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Persona getPersona() {
@@ -83,14 +91,6 @@ public class Venta {
 
     public void setPersona(Persona persona) {
         this.persona = persona;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
     }
 
 }

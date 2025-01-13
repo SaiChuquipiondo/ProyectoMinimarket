@@ -1,120 +1,148 @@
 package com.example.demo.entity;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "persona")
 public class Persona {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private int idPersona;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int idPersona;
 
-	@Column(name = "nombres", length = 45)
-	private String nombre_Persona;
+    @Column(name = "nombres", length = 45)
+    private String nombres;
 
-	@Column(name = "apellidos", length = 100)
-	private String apellidos;
+    @Column(name = "apellidos", length = 100)
+    private String apellidos;
 
-	@Column(name = "dni", length = 8)
-	private String dni;
+    @Column(name = "dni", length = 8)
+    private String dni;
 
-	@Column(name = "direccion", length = 100)
-	private String direccion;
+    @Column(name = "direccion", length = 100)
+    private String direccion;
 
-	@Column(name = "telefono", length = 9)
-	private String telefono;
+    @Column(name = "telefono", length = 9)
+    private String telefono;
 
-	@Column(name = "email", length = 100)
-	private String email;
+    @Column(name = "email", length = 100)
+    private String email;
 
-	@Column(name = "estado", length = 1)
-	private String estado;
+    @Column(name = "estado")
+    private Boolean estado;
 
-	public Persona() {
-		// TODO Auto-generated constructor stub
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo", length = 10)
+    private TipoPersona tipo;
 
-	public Persona(int idPersona, String nombre_Persona, String apellidos, String dni, String direccion,
-			String telefono, String email, String estado) {
-		this.idPersona = idPersona;
-		this.nombre_Persona = nombre_Persona;
-		this.apellidos = apellidos;
-		this.dni = dni;
-		this.direccion = direccion;
-		this.telefono = telefono;
-		this.email = email;
-		this.estado = estado;
-	}
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    private List<Venta> ventas;
 
-	public int getIdPersona() {
-		return idPersona;
-	}
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    private List<usuario> usuarios;
 
-	public void setIdPersona(int idPersona) {
-		this.idPersona = idPersona;
-	}
+    public Persona() {
 
-	public String getNombre_Persona() {
-		return nombre_Persona;
-	}
+    }
 
-	public void setNombre_Persona(String nombre_Persona) {
-		this.nombre_Persona = nombre_Persona;
-	}
+    public int getIdPersona() {
+        return idPersona;
+    }
 
-	public String getApellidos() {
-		return apellidos;
-	}
+    public void setIdPersona(int idPersona) {
+        this.idPersona = idPersona;
+    }
 
-	public void setApellidos(String apellidos) {
-		this.apellidos = apellidos;
-	}
+    public String getNombres() {
+        return nombres;
+    }
 
-	public String getDni() {
-		return dni;
-	}
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
 
-	public void setDni(String dni) {
-		this.dni = dni;
-	}
+    public String getApellidos() {
+        return apellidos;
+    }
 
-	public String getDireccion() {
-		return direccion;
-	}
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
 
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
+    public String getDni() {
+        return dni;
+    }
 
-	public String getTelefono() {
-		return telefono;
-	}
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
 
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
+    public String getDireccion() {
+        return direccion;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getTelefono() {
+        return telefono;
+    }
 
-	public String getEstado() {
-		return estado;
-	}
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
 
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    public TipoPersona getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoPersona tipo) {
+        this.tipo = tipo;
+    }
+
+    public List<Venta> getVentas() {
+        return ventas;
+    }
+
+    public void setVentas(List<Venta> ventas) {
+        this.ventas = ventas;
+    }
+
+    public List<usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(List<usuario> usuarios) {
+        this.usuarios = usuarios;
+    }
 
 }

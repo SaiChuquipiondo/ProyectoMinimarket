@@ -47,6 +47,21 @@ public class TipoUsuarioController {
         return "redirect:/Tipo/Listar";
     }
 
+    @GetMapping("/Editar/{id}")
+    public ModelAndView Editar(@PathVariable("id") int id) {
+        ModelAndView mav = new ModelAndView("Admin/TipoUsuario/EditarTipoUsuario");
+        mav.addObject("tipoUsuario", tipoUsuarioService.buscarTipo(id));
+        return mav;
+    }
+
+    @PostMapping("/Editar/{id}")
+    public String Editar(@PathVariable("id") int id, @ModelAttribute("tipoUsuario") TipoUsuario tipoUsuario) {
+        tipoUsuario.setIdTipoUsuario(id);
+        tipoUsuario.setEstado(true);
+        tipoUsuarioService.actualizarTipo(tipoUsuario);
+        return "redirect:/Tipo/Listar";
+    }
+
     @GetMapping("/Eliminar/{id}")
     public String eliminarTipo(@PathVariable("id") int id) {
         TipoUsuario tipo = tipoUsuarioService.buscarTipo(id);

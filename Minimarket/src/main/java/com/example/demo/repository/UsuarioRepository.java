@@ -18,4 +18,6 @@ public interface UsuarioRepository extends JpaRepository<usuario, Integer> {
 
     @Query(value = "select * from tipo_usuario where estado = 1", nativeQuery = true)
     List<TipoUsuario> ListarTipos();
+
+    usuario findByUsername(String username);
 }

@@ -52,5 +52,9 @@ public class ProductoServiceImpl implements ProductoService {
     public List<Producto> buscarProductoStock(int stock1, int stock2) {
         return productoRepository.findByStockBetween(stock1, stock2);
     }
-
+    
+    // Obtener productos filtrados por categoría
+    public List<Producto> ListarProductosPorCategoria(Categoria categoria) {
+        return productoRepository.findByCategoria(categoria);
+    }
 }

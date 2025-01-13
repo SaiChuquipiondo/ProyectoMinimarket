@@ -20,5 +20,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     List<Producto> findByCategoriaId(@Param("categoriaid") int categoriaid);
 
     List<Producto> findByStockBetween(int stock1, int stock2);
+    List<Producto> findByCategoria(Categoria categoria);
+
 
 }

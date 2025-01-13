@@ -34,7 +34,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 	}
 
 	@Override
-	public Categoria buscarCategoria(int id) {
+	public Categoria buscarCategoriaPorId(int id) {
 		return categoriaRepository.findById(id).orElse(null);
 	}
 
@@ -61,6 +61,11 @@ public class CategoriaServiceImpl implements CategoriaService {
 			productorRepository.save(producto);
 		});
 
+	}
+	
+	@Override
+	public List<Categoria> listaAllCategories() {
+		return categoriaRepository.findAll();
 	}
 
 }

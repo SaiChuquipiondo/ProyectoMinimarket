@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head th:insert="~{layout/layout :: head}">
+<meta charset="UTF-8">
+<title>Categorias</title>
+
+</head>
+<body>
+	<div class="container-fluid px-4" layout:fragment="page-content">
+		<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+			<h1 class="mt-4">Productos</h1>
+			<a href="/Producto/Agregar" class="btn btn-primary btn-lg">
+				<i class="fas fa-plus-circle me-2"></i>Agregar Producto
+			</a>
+		</div>
+		<div class="card mb-4 shadow-sm">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered align-middle text-center shadow">
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Nombre</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Stock</th>
+								<th scope="col">Categoría</th>
+								<th scope="col">Estado</th>
+								<th scope="col">Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="producto : ${producto}">
+								<td scope="row" th:text="${producto.idProducto}"></td>
+								<td th:text="${producto.nombre}"></td>
+                                <td th:text="${producto.precio}"></td>
+                                <td th:text="${producto.stock}"></td>
+								<td th:text="${producto.categoria.nombre}"></td>
+                                
+								<td>
+									<span th:text="${producto.estado ? 'Activo' : 'Inactivo'}" 
+										  th:classappend="${producto.estado ? 'text-success' : 'text-danger'}"></span>
+								</td>
+								<td>
+									<a th:href="@{/Producto/Editar/{id} (id = ${producto.idProducto})}" class="btn btn-warning btn-sm">
+										<i class="fas fa-edit"></i> Editar
+									</a>
+									<a th:href="@{/Producto/Eliminar/{id} (id = ${producto.idProducto})}" class="btn btn-danger btn-sm">
+										<i class="fas fa-trash"></i> Eliminar
+									</a>
+								</td>
+							</tr>
+							<tr th:if="${producto.empty}">
+								<td colspan="4" class="text-muted">No hay productos disponibles.</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+</html>

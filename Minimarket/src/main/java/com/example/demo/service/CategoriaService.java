@@ -10,11 +10,14 @@ public interface CategoriaService {
 
 	public abstract void agregarCategoria(Categoria categoria);
 
-	public abstract Categoria buscarCategoria(int id);
+	public abstract Categoria buscarCategoriaPorId(int id);
 
 	public abstract void editarCategoria(Categoria categoria);
 
 	public abstract void eliminarCategoria(int id);
 
 	public abstract void actualizarEstadoCategoria(int id, boolean estado);
+	
+	public List<Categoria> listaAllCategories();
+	
 }

@@ -49,7 +49,7 @@ public class CategoriaController {
 	@GetMapping("/Editar/{id}")
 	public ModelAndView EditarCategoria(@PathVariable("id") int id) {
 		ModelAndView mav = new ModelAndView("Admin/Categoria/EditarCategoria");
-		Categoria categoria = categoriaService.buscarCategoria(id);
+		Categoria categoria = categoriaService.buscarCategoriaPorId(id);
 		mav.addObject("categoria", categoria);
 		return mav;
 	}
@@ -65,7 +65,7 @@ public class CategoriaController {
 
 	@GetMapping("/Eliminar/{id}")
 	public String eliminarCategoria(@PathVariable("id") int id) {
-		Categoria categoria = categoriaService.buscarCategoria(id);
+		Categoria categoria = categoriaService.buscarCategoriaPorId(id);
 		if (categoria != null) {
 			categoriaService.actualizarEstadoCategoria(id, false);
 		}

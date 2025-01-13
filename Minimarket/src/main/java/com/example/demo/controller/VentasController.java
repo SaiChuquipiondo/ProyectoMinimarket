@@ -30,29 +30,32 @@ public class VentasController {
 	private ProductoService productoService;
 
 	@GetMapping({ "/Listar" })
-	public String ver(@RequestParam(name = "id", defaultValue = "0") int categoriaId, Model model) {
-		// Obtener todas las categorías
-        List<Categoria> listarCategorias = categoriaService.ListarCategoria();
-        
-        // Obtener la fecha actual
-        String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+	public String ver(@RequestParam(name = "categoriaId", defaultValue = "0") int categoriaId,
+			@RequestParam(name = "nombreProducto", defaultValue = "") String nombreProducto, Model model) {
+// Obtener la lista de categorías activas
+		List<Categoria> listarCategorias = categoriaService.ListarCategoria();
+		String today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
 
-        // Obtener productos, filtrados por categoría si se selecciona una
-        List<Producto> listarProductos;
-        if (categoriaId == 0) {
-            // Si se selecciona "todas las categorías", mostrar todos los productos
-            listarProductos = productoService.ListarProducto();
-        } else {
-            // Si se selecciona una categoría, filtrar los productos por categoría
-            Categoria categoriaSeleccionada = categoriaService.buscarCategoriaPorId(categoriaId);
-            listarProductos = productoService.ListarProductosPorCategoria(categoriaSeleccionada);
-        }
-
-        // Agregar los atributos al modelo
-        model.addAttribute("producto", listarProductos);
-        model.addAttribute("categoria", listarCategorias);
-        model.addAttribute("today", today);
-
-        return "Admin/Ventas/ListarVentas";
+// Filtrar productos según la categoría seleccionada y el nombre del producto
+		List<Producto> listarProductos;
+	    if (categoriaId == 0 && nombreProducto.isEmpty()) {
+	        // Si no hay filtro, traer todos los productos
+	        listarProductos = productoService.ListarProducto();
+	    } else if (categoriaId == 0) {
+	        // Si no hay filtro de categoría, buscar por nombre
+	        listarProductos = productoService.findByNombreProducto(nombreProducto);
+	    } else if (nombreProducto.isEmpty()) {
+	        // Si no hay filtro de nombre, buscar solo por categoría
+	        listarProductos = productoService.findByCategoriaId(categoriaId);
+	    } else {
+	        // Si hay filtros tanto para categoría como para nombre
+	        listarProductos = productoService.findByCategoriaAndNombre(categoriaId, nombreProducto);
+	    }
+		 model.addAttribute("producto", listarProductos);
+		    model.addAttribute("categoria", listarCategorias);
+		    model.addAttribute("categoriaId", categoriaId);
+		    model.addAttribute("nombreProducto", nombreProducto);
+		    model.addAttribute("today", today);
+		return "Admin/Ventas/ListarVentas";
 	}
 }

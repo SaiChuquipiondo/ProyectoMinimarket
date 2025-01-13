@@ -20,5 +20,10 @@ public interface ProductoService {
 
     public abstract List<Producto> buscarProductoStock(int stock1, int stock2);
 
-    public List<Producto> ListarProductosPorCategoria(Categoria categoria);
+    
+    public List<Producto> findByNombreProducto(String nombreProducto);
+
+    public List<Producto> findByCategoriaId(int categoriaId) ;
+
+    public List<Producto> findByCategoriaAndNombre(int categoriaId, String nombreProducto) ;
 }

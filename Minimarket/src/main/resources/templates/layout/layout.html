@@ -12,6 +12,19 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
         <link rel="stylesheet" th:href="@{/assets/css/Estilos.css}" />
     <title>Administrador</title>
+
+    <script>
+        function validarFechas() {
+            var fechaInicio = document.getElementById('FechaInicio').value;
+            var fechaFin = document.getElementById('FechaFin').value;
+    
+            if (new Date(fechaInicio) > new Date(fechaFin)) {
+                alert('La fecha de inicio no puede ser posterior a la fecha de fin.');
+                return false;  // Evita que el formulario se envíe
+            }
+            return true;  // Permite enviar el formulario
+        }
+    </script>
 </head>
 
 <body>
@@ -113,18 +126,8 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
         </a>
         <ul id="reportesSubmenu" class="collapse list-unstyled ms-3">
             <li>
-                <a href="/Reportes/Ventas" class="list-group-item list-group-item-action bg-transparent">
+                <a th:href="@{/Reporte/ventas}" class="list-group-item list-group-item-action bg-transparent">
                     <i class="fas fa-file-alt me-2"></i>Reportes de Ventas
-                </a>
-            </li>
-            <li>
-                <a href="/Reportes/Inventario" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-file-invoice me-2"></i>Reportes de Inventario
-                </a>
-            </li>
-            <li>
-                <a href="/Reportes/Empleados" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-user me-2"></i>Reportes de Empleados
                 </a>
             </li>
         </ul>

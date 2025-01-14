@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head th:insert="~{layout/layout :: head}">
+<meta charset="UTF-8">
+<title>Reportes</title>
+
+</head>
+<body>
+	<div class="container-fluid px-4" layout:fragment="page-content">
+        <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+            <h1 class="mt-4">Generar Reporte Venta</h1>
+            <a th:href="@{/Reporte/Listar}" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Regresar
+            </a>
+        </div>
+    
+        <!-- Card para el formulario -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <form th:action="@{/Reporte/ventas/excel}" method="post" onsubmit="return validarFechas();">
+                    <div class="mb-3">
+                        <label for="FechaInicio" class="form-label">Fecha de Inicio</label>
+                        <input type="date" class="form-control" id="FechaInicio" name="fechaInicio" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="FechaFin" class="form-label">Fecha de Fin</label>
+                        <input type="date" class="form-control" id="FechaFin" name="fechaFin" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Generar Reporte
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

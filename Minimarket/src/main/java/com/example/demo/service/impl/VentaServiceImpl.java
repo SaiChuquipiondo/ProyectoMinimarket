@@ -20,8 +20,12 @@ public class VentaServiceImpl implements VentaService {
 
     @Override
     public List<Venta> obtenerVentasPorFecha(Date fechaInicio, Date fechaFin) {
-
         return ventaRepository.findByFechaRegistroBetween(fechaInicio, fechaFin);
     }
+
+	@Override
+	public Venta guardarVenta(Venta venta) {
+		return ventaRepository.save(venta);
+	}
 
 }

@@ -19,5 +19,7 @@ public interface ClienteService {
     public abstract void eliminarCliente(int id);
 
     public abstract List<Venta> listarVentasCliente(int id);
+    
+    public abstract List<Persona> buscarDniCliente(String dni);
 
 }

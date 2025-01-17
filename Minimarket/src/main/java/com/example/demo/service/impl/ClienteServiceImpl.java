@@ -49,4 +49,9 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteRepository.listarVentasCliente(id);
     }
 
+	@Override
+	public List<Persona> buscarDniCliente(String dni) {
+		return clienteRepository.findByDniCliente(dni);
+	}
+
 }

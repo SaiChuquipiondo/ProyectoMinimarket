@@ -1,188 +1,484 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head th:fragment="head">
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 
 
-        <link rel="stylesheet" th:href="@{/assets/css/Estilos.css}" />
-    <title>Administrador</title>
+<link rel="stylesheet" th:href="@{/assets/css/Estilos.css}" />
+<title>Administrador</title>
 
-    <script>
-        function validarFechas() {
-            var fechaInicio = document.getElementById('FechaInicio').value;
-            var fechaFin = document.getElementById('FechaFin').value;
-    
-            if (new Date(fechaInicio) > new Date(fechaFin)) {
-                alert('La fecha de inicio no puede ser posterior a la fecha de fin.');
-                return false;  // Evita que el formulario se envíe
+<script>
+	function validarFechas() {
+		var fechaInicio = document.getElementById('FechaInicio').value;
+		var fechaFin = document.getElementById('FechaFin').value;
+
+		if (new Date(fechaInicio) > new Date(fechaFin)) {
+			alert('La fecha de inicio no puede ser posterior a la fecha de fin.');
+			return false; // Evita que el formulario se envíe
+		}
+		return true; // Permite enviar el formulario
+	}
+</script>
+
+<script>
+    let productoSeleccionado = null;
+    let filaSeleccionadaIzquierda = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const filasDerecha = document.querySelectorAll("#productosLista tr");
+
+        // Seleccionar una fila de la tabla derecha al hacer clic
+        filasDerecha.forEach(fila => {
+            fila.addEventListener("click", () => {
+                filasDerecha.forEach(f => f.classList.remove("selected")); // Desmarcar las filas previas
+                fila.classList.add("selected");
+
+                productoSeleccionado = {
+                    id: fila.querySelector("td:nth-child(1)").textContent.trim(),
+                    nombre: fila.querySelector("td:nth-child(2)").textContent.trim(),
+                    precio: fila.querySelector("td:nth-child(3)").textContent.trim(),
+                    stock: parseInt(fila.querySelector("td:nth-child(4)").textContent.trim(), 10),
+                    filaElement: fila
+                };
+            });
+        });
+
+        // Seleccionar una fila de la tabla izquierda
+        const tablaIzquierda = document.querySelector("#tabla tbody");
+        tablaIzquierda.addEventListener("click", (e) => {
+            const filasIzquierda = tablaIzquierda.querySelectorAll("tr");
+            filasIzquierda.forEach(f => f.classList.remove("selected")); // Desmarcar las filas previas
+            filaSeleccionadaIzquierda = e.target.closest("tr");
+            if (filaSeleccionadaIzquierda) {
+                filaSeleccionadaIzquierda.classList.add("selected");
             }
-            return true;  // Permite enviar el formulario
+        });
+
+        // Al hacer clic en el botón "Agregar al carrito"
+        document.querySelector(".btn-agregar").addEventListener("click", () => {
+            if (!productoSeleccionado) {
+                alert("Por favor, selecciona un producto antes de agregarlo al carrito.");
+                return;
+            }
+
+            // Solicitar cantidad al usuario
+            const cantidad = prompt(
+                `INGRESA LA CANTIDAD DE ${productoSeleccionado.nombre} (STOCK DISPONIBLE: ${productoSeleccionado.stock})`
+            );
+
+            if (cantidad && parseInt(cantidad, 10) > 0 && parseInt(cantidad, 10) <= productoSeleccionado.stock) {
+                const cantidadNumerica = parseInt(cantidad, 10);
+
+                // Agregar al carrito
+                agregarAlCarrito(productoSeleccionado, cantidadNumerica);
+
+                // Actualizar el stock restante en la tabla de productos
+                productoSeleccionado.stock -= cantidadNumerica;
+                productoSeleccionado.filaElement.querySelector("td:nth-child(4)").textContent = productoSeleccionado.stock;
+
+                // Si el stock llega a 0, deshabilitar la fila
+                if (productoSeleccionado.stock === 0) {
+                    productoSeleccionado.filaElement.classList.add("out-of-stock");
+                }
+            } else {
+                alert("Cantidad inválida o excede el stock disponible.");
+            }
+        });
+
+        // Al hacer clic en el botón "Eliminar"
+        document.querySelector(".btn-eliminar").addEventListener("click", () => {
+            if (!filaSeleccionadaIzquierda) {
+                alert("Por favor, selecciona un producto antes de eliminar.");
+                return;
+            }
+
+            // Preguntar al usuario si está seguro de eliminar
+            const confirmarEliminacion = confirm("¿Estás seguro de que deseas eliminar este producto?");
+
+            if (confirmarEliminacion) {
+                // Obtener datos de la fila seleccionada
+                const idProducto = filaSeleccionadaIzquierda.querySelector("td:nth-child(1)").textContent.trim();
+                const cantidadEliminada = parseInt(filaSeleccionadaIzquierda.querySelector("td:nth-child(3)").textContent.trim(), 10);
+
+                // Eliminar la fila de la tabla izquierda
+                filaSeleccionadaIzquierda.remove();
+                filaSeleccionadaIzquierda = null;
+
+                // Actualizar el stock en la tabla derecha
+                const tablaDerecha = document.querySelector("#productosLista");
+                const filaProductoDerecha = Array.from(tablaDerecha.querySelectorAll("tr")).find(
+                    fila => fila.querySelector("td:nth-child(1)").textContent.trim() === idProducto
+                );
+
+                if (filaProductoDerecha) {
+                    const stockActual = parseInt(filaProductoDerecha.querySelector("td:nth-child(4)").textContent.trim(), 10);
+                    filaProductoDerecha.querySelector("td:nth-child(4)").textContent = stockActual + cantidadEliminada;
+
+                    // Rehabilitar la fila si estaba agotada
+                    filaProductoDerecha.classList.remove("out-of-stock");
+                }
+
+                alert("Producto eliminado correctamente.");
+            } else {
+                alert("Operación cancelada.");
+            }
+        });
+    });
+
+    // Agregar el producto a la tabla del carrito
+    function agregarAlCarrito(producto, cantidad) {
+        const tablaCarrito = document.querySelector("#tabla tbody");
+
+        // Verificar si el producto ya está en el carrito
+        const filaExistente = Array.from(tablaCarrito.querySelectorAll("tr")).find(
+            fila => fila.querySelector("td:nth-child(1)").textContent.trim() === producto.id
+        );
+
+        if (filaExistente) {
+            // Actualizar la cantidad si ya existe en el carrito
+            const cantidadActual = parseInt(filaExistente.querySelector("td:nth-child(3)").textContent.trim(), 10);
+            filaExistente.querySelector("td:nth-child(3)").textContent = cantidadActual + cantidad;
+        } else {
+            // Agregar una nueva fila al carrito
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+                <td>${producto.id}</td>
+                <td>${producto.nombre}</td>
+                <td>${producto.precio}</td>
+                <td>${cantidad}</td>
+            `;
+            tablaCarrito.appendChild(fila);
         }
-    </script>
-</head>
+    }
+</script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const btnBuscarCliente = document.querySelector("#btnBuscarCliente");
+    const dniClienteInput = document.querySelector("#dniCliente");
+    const idClienteInput = document.querySelector("#idCliente");
+    const nombreClienteInput = document.querySelector("#nombreCliente");
+    const dniInput = document.querySelector("#dniClienteInput");
+
+    btnBuscarCliente.addEventListener("click", () => {
+        const dni = dniInput.value.trim();
+
+        if (!dni) {
+            alert("Por favor, ingrese un DNI válido.");
+            return;
+        }
+
+        fetch(`/Ventas/BuscarClientePorDni?dni=${dni}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("No se encontró un cliente con el DNI ingresado.");
+                }
+                return response.json();
+            })
+            .then(cliente => {
+                // Actualizar los campos con los datos del cliente
+                idClienteInput.value = cliente.idPersona;
+                dniClienteInput.value = cliente.dni;
+                nombreClienteInput.value = cliente.nombres;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert(error.message);
+            });
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const totalMontoSpan = document.getElementById("totalMonto");
+    const vueltoMontoSpan = document.getElementById("vueltoMonto");
+    const montoPagoInput = document.getElementById("montoPago");
+    const procesarPagoBtn = document.getElementById("procesarPago");
+    const idClienteInput = document.getElementById("idCliente");  // Asegúrate de tener un campo para obtener el ID del cliente
+    const fechaRegistroInput = document.getElementById("fechaRegistro");
+    // Función para calcular el monto total
+    const calcularMontoTotal = () => {
+        const tablaCarrito = document.querySelector("#tabla tbody");
+        let total = 0;
+
+        // Recorrer las filas del carrito y sumar los totales de cada producto
+        tablaCarrito.querySelectorAll("tr").forEach(fila => {
+            const cantidad = parseInt(fila.querySelector("td:nth-child(3)").textContent.trim(), 10) || 0;
+            const precioUnitario = parseFloat(fila.querySelector("td:nth-child(4)").textContent.trim()) || 0;
+            total += cantidad * precioUnitario;
+        });
+
+        totalMontoSpan.textContent = total.toFixed(2); // Actualizar el total
+        calcularVuelto(); // Recalcular el vuelto automáticamente
+    };
+
+    // Función para calcular el vuelto
+    const calcularVuelto = () => {
+        const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
+        const montoPago = parseFloat(montoPagoInput.value) || 0;
+        const vuelto = montoPago - montoTotal;
+        vueltoMontoSpan.textContent = vuelto >= 0 ? vuelto.toFixed(2) : "0.00";
+    };
+
+    // Detectar cambios en el monto de pago
+    montoPagoInput.addEventListener("input", calcularVuelto);
+
+    // Calcular el total cuando se actualice el carrito
+    const tablaCarrito = document.querySelector("#tabla tbody");
+    const observer = new MutationObserver(calcularMontoTotal);
+
+    // Observar cambios en la tabla del carrito (nuevas filas o cambios en las existentes)
+    observer.observe(tablaCarrito, { childList: true, subtree: true });
+
+    // Procesar el pago
+    procesarPagoBtn.addEventListener("click", async () => {
+    const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
+    const montoPago = parseFloat(montoPagoInput.value) || 0;
+
+    if (montoPago < montoTotal) {
+        alert("El monto de pago no cubre el total. Por favor, ingrese un monto válido.");
+        return;
+    }
+
+    const idCliente = idClienteInput.value;
+    if (!idCliente) {
+        alert("Debe seleccionar un cliente.");
+        return;
+    }
+
+    const fechaRegistro = fechaRegistroInput.value;
+
+    // Crear el objeto de venta
+    const datosVenta = {
+        precioTotal: montoTotal,
+        fechaRegistro: fechaRegistro,
+        estado: true,
+        usuario: { idUsuario: 1 }, // Asumiendo que el ID del usuario es 1
+        persona: { idPersona: parseInt(idCliente) },
+    };
+
+    try {
+        const response = await fetch('/Ventas/Guardar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer <tu-token>'
+            },
+            body: JSON.stringify(datosVenta),
+        });
+
+        if (response.ok) {
+            alert("Venta realizada correctamente.");
+            location.reload();
+        } else {
+            const error = await response.text();
+            alert("Error al procesar la venta: " + error);
+            console.log("ERROR1:"+error);
+        }
+    } catch (error) {
+        console.error("Error al procesar la venta:", error);
+        alert("Ocurrió un error al procesar la venta.");
+        console.log("ERROR2:"+error);
+    }
+});
+	
+    // Inicializar el cálculo del total al cargar la página
+    calcularMontoTotal();
+});
+</script>
+
+<style>
+tr.selected {
+	background-color: #d1ecf1;
+	cursor: pointer;
+}
+</style>
+<style>
+tr.out-of-stock {
+	background-color: #f8d7da;
+	pointer-events: none;
+	color: #6c757d;
+}
+</style>
+<style>
+tr.selected {
+	background-color: #d4edda;
+	cursor: pointer;
+}
+
+tr.out-of-stock {
+	background-color: #f8d7da;
+	pointer-events: none;
+	color: #6c757d;
+}
+</style>
 <body>
-    <div class="d-flex" id="wrapper">
-        <!-- Sidebar -->
-        <div class="bg-white" id="sidebar-wrapper">
-            <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold border-bottom">
-           
-           <a  href="/Administrador/Home">
-           		<i class="fas fa-store me-2"></i>Minimarket Jyk
-           </a>
-       </div>
-       
-            
-       <div class="list-group list-group-flush my-3">
-        <!-- Inicio -->
-        <a th:href="@{/Ventas/Listar}" class="list-group-item list-group-item-action bg-transparent second-text active">
-            <i class="fas fa-home me-2"></i>Ventas
-        </a>
-    
-        <!-- Empleados -->
-        <a href="#empleadosSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
-            <i class="fas fa-users me-2"></i>Personal
-        </a>
-        <ul id="empleadosSubmenu" class="collapse list-unstyled ms-3">
-            <li>
-                <a th:href="@{/Personal/Listar}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-list me-2"></i>Listar Personal
-                </a>
-            </li>
-            <li>
-                <a th:href="@{/Personal/Agregar}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-user-plus me-2"></i>Agregar Empleado
-                </a>
-            </li>
-        </ul>
-        <!-- Clientes -->
-        <a href="#clientesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
-            <i class="fas fa-user-friends me-2"></i>Clientes
-        </a>
-        <ul id="clientesSubmenu" class="collapse list-unstyled ms-3">
-            <li>
-                <a th:href="@{/Cliente/Listar}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-users me-2"></i>Listado de Clientes
-                </a>
-            </li>
-            <li>
-                <a th:href="@{/Cliente/Agregar}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-user-plus me-2"></i>Agregar Cliente
-                </a>
-            </li>
-        </ul>
-        
-    
-    
-        <!-- Inventario -->
-        <a href="#inventarioSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
-            <i class="fas fa-boxes me-2"></i>Inventario
-        </a>
-        <ul id="inventarioSubmenu" class="collapse list-unstyled ms-3">
-            <li>
-                <a th:href="@{/Producto/Listar}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-box me-2"></i>Productos
-                </a>
-            </li>
-            <li>
-                <a th:href="@{/Categoria/Listar}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-tags me-2"></i>Categorías
-                </a>
-            </li>
-            <li>
-                <a th:href="@{/Producto/ControldeStock}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-clipboard-list me-2"></i>Control de Stock
-                </a>
-            </li>
-        </ul>
-        <!-- Usuarios -->
-<a href="#usuariosSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
-    <i class="fas fa-users me-2"></i>Usuarios
-</a>
-<ul id="usuariosSubmenu" class="collapse list-unstyled ms-3">
-    <li>
-        <a th:href="@{/Usuario/Listar}" class="list-group-item list-group-item-action bg-transparent">
-            <i class="fas fa-user me-2"></i>Lista de Usuarios
-        </a>
-    </li>
-    <li>
-        <a th:href="@{/Tipo/Listar}" class="list-group-item list-group-item-action bg-transparent">
-            <i class="fas fa-user-shield me-2"></i>Roles
-        </a>
-    </li>
-</ul>
+	<div class="d-flex" id="wrapper">
+		<!-- Sidebar -->
+		<div class="bg-white" id="sidebar-wrapper">
+			<div
+				class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold border-bottom">
 
-        
-    
-        <!-- Reportes -->
-        <a href="#reportesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
-            <i class="fas fa-chart-line me-2"></i>Reportes
-        </a>
-        <ul id="reportesSubmenu" class="collapse list-unstyled ms-3">
-            <li>
-                <a th:href="@{/Reporte/ventas}" class="list-group-item list-group-item-action bg-transparent">
-                    <i class="fas fa-file-alt me-2"></i>Reportes de Ventas
-                </a>
-            </li>
-        </ul>
-    </div>
-    
-    
-        </div>
-        <!-- /#sidebar-wrapper -->
+				<a href="/Administrador/Home"> <i class="fas fa-store me-2"></i>Minimarket
+					Jyk
+				</a>
+			</div>
 
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
-                </div>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+			<div class="list-group list-group-flush my-3">
+				<!-- Inicio -->
+				<a th:href="@{/Ventas/Listar}"
+					class="list-group-item list-group-item-action bg-transparent second-text active">
+					<i class="fas fa-home me-2"></i>Ventas
+				</a>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user me-2"></i>Sai Chuquipiondo
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#">Opciones</a></li>
-                                <li><a class="dropdown-item" href="#">Cerrar Sesion</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+				<!-- Empleados -->
+				<a href="#empleadosSubmenu"
+					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+					data-bs-toggle="collapse"> <i class="fas fa-users me-2"></i>Personal
+				</a>
+				<ul id="empleadosSubmenu" class="collapse list-unstyled ms-3">
+					<li><a th:href="@{/Personal/Listar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-list me-2"></i>Listar Personal
+					</a></li>
+					<li><a th:href="@{/Personal/Agregar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-user-plus me-2"></i>Agregar Empleado
+					</a></li>
+				</ul>
+				<!-- Clientes -->
+				<a href="#clientesSubmenu"
+					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+					data-bs-toggle="collapse"> <i class="fas fa-user-friends me-2"></i>Clientes
+				</a>
+				<ul id="clientesSubmenu" class="collapse list-unstyled ms-3">
+					<li><a th:href="@{/Cliente/Listar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-users me-2"></i>Listado de Clientes
+					</a></li>
+					<li><a th:href="@{/Cliente/Agregar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-user-plus me-2"></i>Agregar Cliente
+					</a></li>
+				</ul>
 
-            <div class="container-fluid px-4"layout:fragment="page-content">
-            </div>
-        </div>
-    </div>
-    <!-- /#page-content-wrapper -->
-    
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        var el = document.getElementById("wrapper");
-        var toggleButton = document.getElementById("menu-toggle");
 
-        toggleButton.onclick = function () {
-            el.classList.toggle("toggled");
-        };
-    </script>
+				<!-- Inventario -->
+				<a href="#inventarioSubmenu"
+					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+					data-bs-toggle="collapse"> <i class="fas fa-boxes me-2"></i>Inventario
+				</a>
+				<ul id="inventarioSubmenu" class="collapse list-unstyled ms-3">
+					<li><a th:href="@{/Producto/Listar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-box me-2"></i>Productos
+					</a></li>
+					<li><a th:href="@{/Categoria/Listar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-tags me-2"></i>Categorías
+					</a></li>
+					<li><a th:href="@{/Producto/ControldeStock}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-clipboard-list me-2"></i>Control de Stock
+					</a></li>
+				</ul>
+				<!-- Usuarios -->
+				<a href="#usuariosSubmenu"
+					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+					data-bs-toggle="collapse"> <i class="fas fa-users me-2"></i>Usuarios
+				</a>
+				<ul id="usuariosSubmenu" class="collapse list-unstyled ms-3">
+					<li><a th:href="@{/Usuario/Listar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-user me-2"></i>Lista de Usuarios
+					</a></li>
+					<li><a th:href="@{/Tipo/Listar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-user-shield me-2"></i>Roles
+					</a></li>
+				</ul>
+
+
+
+				<!-- Reportes -->
+				<a href="#reportesSubmenu"
+					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
+					data-bs-toggle="collapse"> <i class="fas fa-chart-line me-2"></i>Reportes
+				</a>
+				<ul id="reportesSubmenu" class="collapse list-unstyled ms-3">
+					<li><a th:href="@{/Reporte/ventas}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-file-alt me-2"></i>Reportes de Ventas
+					</a></li>
+				</ul>
+			</div>
+
+
+		</div>
+		<!-- /#sidebar-wrapper -->
+
+		<!-- Page Content -->
+		<div id="page-content-wrapper">
+			<nav
+				class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
+				<div class="d-flex align-items-center">
+					<i class="fas fa-align-left primary-text fs-4 me-3"
+						id="menu-toggle"></i>
+				</div>
+
+				<button class="navbar-toggler" type="button"
+					data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+						<li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle second-text fw-bold" href="#"
+							id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+							aria-expanded="false"> <i class="fas fa-user me-2"></i>Sai
+								Chuquipiondo
+						</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+								<li><a class="dropdown-item" href="#">Opciones</a></li>
+								<li><a class="dropdown-item" href="#">Cerrar Sesion</a></li>
+							</ul></li>
+					</ul>
+				</div>
+			</nav>
+
+			<div class="container-fluid px-4" layout:fragment="page-content">
+			</div>
+		</div>
+	</div>
+	<!-- /#page-content-wrapper -->
+
+
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		var el = document.getElementById("wrapper");
+		var toggleButton = document.getElementById("menu-toggle");
+
+		toggleButton.onclick = function() {
+			el.classList.toggle("toggled");
+		};
+	</script>
 </body>
 
 </html>

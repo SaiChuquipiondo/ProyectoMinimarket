@@ -8,4 +8,8 @@ import com.example.demo.entity.Venta;
 public interface VentaService {
 
     public abstract List<Venta> obtenerVentasPorFecha(Date fechaInicio, Date fechaFin);
+    
+    public abstract Venta guardarVenta(Venta venta);
+    
+    
 }

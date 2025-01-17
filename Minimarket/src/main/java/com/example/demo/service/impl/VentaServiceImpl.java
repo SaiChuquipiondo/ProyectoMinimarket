@@ -28,4 +28,9 @@ public class VentaServiceImpl implements VentaService {
 		return ventaRepository.save(venta);
 	}
 
+	@Override
+	public List<Venta> ListarVenta() {
+		return ventaRepository.findAll();
+	}
+
 }

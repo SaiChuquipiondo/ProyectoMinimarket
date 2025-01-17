@@ -10,13 +10,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/Ventas/Guardar").permitAll() // Permitir acceso a todos
-                .anyRequest().authenticated() // Requerir autenticación para las demás rutas
-        )
-        .csrf().disable(); // Deshabilitar CSRF si es necesario para pruebas
-
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable() // Desactiva CSRF si no lo necesitas
+            .authorizeHttpRequests()
+            .anyRequest().permitAll(); // Permite acceso a todas las rutas
         return http.build();
     }
 }

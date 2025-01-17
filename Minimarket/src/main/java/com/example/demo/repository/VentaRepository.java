@@ -12,5 +12,7 @@ import com.example.demo.entity.Venta;
 public interface VentaRepository extends JpaRepository<Venta, Integer> {
 
     List<Venta> findByFechaRegistroBetween(Date fechaInicio, Date fechaFin);
+    
+    
 
 }

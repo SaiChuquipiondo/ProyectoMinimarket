@@ -26,5 +26,10 @@ public class Detalle_VentaServiceImpl implements Detalle_VentaService {
 		return detalleventaRepository.save(detalleventa);
 	}
 
+	@Override
+	public List<Detalle_Venta> ListarDetalle() {
+		return detalleventaRepository.findAll();
+	}
+
 
 }

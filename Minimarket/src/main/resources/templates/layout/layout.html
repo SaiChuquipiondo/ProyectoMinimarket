@@ -418,6 +418,10 @@ tr.out-of-stock {
 					data-bs-toggle="collapse"> <i class="fas fa-chart-line me-2"></i>Reportes
 				</a>
 				<ul id="reportesSubmenu" class="collapse list-unstyled ms-3">
+					<li><a th:href="@{/Reporte/Listar}"
+						class="list-group-item list-group-item-action bg-transparent">
+							<i class="fas fa-file-alt me-2"></i>Lista de Reportes
+					</a></li>
 					<li><a th:href="@{/Reporte/ventas}"
 						class="list-group-item list-group-item-action bg-transparent">
 							<i class="fas fa-file-alt me-2"></i>Reportes de Ventas

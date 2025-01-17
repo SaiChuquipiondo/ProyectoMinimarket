@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head th:insert="~{layout/layout :: head}">
+<meta charset="UTF-8">
+<title>Ventas</title>
+
+</head>
+<body>
+	<div class="container-fluid px-4" layout:fragment="page-content">
+		<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+			<h1 class="mt-4">Reportes</h1>
+		</div>
+		<div class="card mb-4 shadow-sm">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered align-middle text-center shadow">
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Total</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Cliente</th>
+								<th scope="col">Usuario</th>
+								<th scope="col">Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="v :${venta}">
+								<td scope="row" th:text="${v.idVenta}"></td>
+								<td th:text="${v.precioTotal}"></td>
+								<td th:text="${v.fechaRegistro}"></td>
+								<td th:text="${v.persona.nombres}"></td>
+                                <td th:text="${v.usuario.persona.nombres}"></td>
+								
+							</tr>
+							<tr th:if="${venta.empty}">
+								<td colspan="4" class="text-muted">No hay ventas disponibles.</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
+
+
+

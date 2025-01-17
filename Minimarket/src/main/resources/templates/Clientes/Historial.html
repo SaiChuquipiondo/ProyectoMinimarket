@@ -35,7 +35,7 @@
 							<tr th:each="venta : ${ventas}">
 								<td scope="row" th:text="${venta.idVenta}"></td>
                                 <td th:text="${venta.precioTotal}"></td>
-                                <td th:text="${venta.fecha}"></td>
+                                <td th:text="${venta.fechaRegistro}"></td>
                                 <td th:text="${venta.usuario.persona.nombres+' '+venta.usuario.persona.apellidos}"></td>
 								<td>
 									<span th:text="${venta.estado ? 'Activo' : 'Inactivo'}" 

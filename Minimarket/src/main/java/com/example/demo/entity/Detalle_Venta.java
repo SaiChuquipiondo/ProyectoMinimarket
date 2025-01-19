@@ -40,4 +40,54 @@ public class Detalle_Venta {
     @JoinColumn(name = "id_producto")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Producto producto;
+
+	public int getIdDetalle() {
+		return idDetalle;
+	}
+
+	public void setIdDetalle(int idDetalle) {
+		this.idDetalle = idDetalle;
+	}
+
+	public int getCantProd() {
+		return cantProd;
+	}
+
+	public void setCantProd(int cantProd) {
+		this.cantProd = cantProd;
+	}
+
+	public double getImporte() {
+		return importe;
+	}
+
+	public void setImporte(double importe) {
+		this.importe = importe;
+	}
+
+	public Boolean getEstado() {
+		return estado;
+	}
+
+	public void setEstado(Boolean estado) {
+		this.estado = estado;
+	}
+
+	public Venta getVenta() {
+		return venta;
+	}
+
+	public void setVenta(Venta venta) {
+		this.venta = venta;
+	}
+
+	public Producto getProducto() {
+		return producto;
+	}
+
+	public void setProducto(Producto producto) {
+		this.producto = producto;
+	}
+    
+    
 }

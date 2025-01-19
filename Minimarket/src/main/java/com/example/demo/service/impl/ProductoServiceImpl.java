@@ -67,6 +67,11 @@ public class ProductoServiceImpl implements ProductoService {
     public List<Producto> findByCategoriaAndNombre(int categoriaId, String nombreProducto) {
         return productoRepository.findByCategoriaIdAndNombre(categoriaId, "%" + nombreProducto + "%"); // Buscar por categoría y nombre
     }
+
+	@Override
+	public Producto actualizarStock(int id, String stock) {
+		return productoRepository.actualizarStock(id, stock);
+	}
     
   
 }

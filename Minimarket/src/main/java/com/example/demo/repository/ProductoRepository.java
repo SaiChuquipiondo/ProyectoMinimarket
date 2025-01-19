@@ -26,4 +26,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
     @Query(value = "select * from producto p where id_categoria = :categoriaid and (:nombreProducto = '' or p.nombre like concat('%', :nombreProducto, '%'))", nativeQuery = true)
     List<Producto> findByCategoriaIdAndNombre(@Param("categoriaid") int categoriaId, @Param("nombreProducto") String nombreProducto);
+
+    @Query(value = "UPDATE producto set stock = :stock where id = :id", nativeQuery = true)
+	Producto actualizarStock(@Param("id") int id, @Param("stock") String stock);
 }

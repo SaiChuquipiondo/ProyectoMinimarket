@@ -31,7 +31,7 @@ public class Detalle_Venta {
     @Column(name = "estado")
     private Boolean estado;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "id_venta")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Venta venta;

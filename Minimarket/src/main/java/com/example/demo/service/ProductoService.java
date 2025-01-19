@@ -27,7 +27,7 @@ public interface ProductoService {
 
     public List<Producto> findByCategoriaAndNombre(int categoriaId, String nombreProducto) ;
     
-    public abstract Producto actualizarStock(int id, String stock);
+    public abstract boolean actualizarStock(int idProducto, int cantidadVendida);
     
     
 }

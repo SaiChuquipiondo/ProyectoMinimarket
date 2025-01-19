@@ -46,7 +46,7 @@ public class Venta {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Persona persona;
     
-    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Detalle_Venta> detalleVentas;
 
     public Venta() {

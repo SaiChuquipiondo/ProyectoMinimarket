@@ -95,32 +95,33 @@ public class VentasController {
 	}
 	
 	@PostMapping("/Guardar")
-    public ResponseEntity<String> guardarVenta(@RequestBody Venta venta) {
-        try {
-            // Validar usuario
-            usuario usuario = usuarioService.obtenerUsuario(venta.getUsuario().getIdUsuario());
-            if (usuario == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario no encontrado.");
-            }
+	public ResponseEntity<String> guardarVenta(@RequestBody Venta venta) {
+	    try {
+	        // Validar usuario
+	        usuario usuario = usuarioService.obtenerUsuario(venta.getUsuario().getIdUsuario());
+	        if (usuario == null) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario no encontrado.");
+	        }
 
-            // Validar cliente
-            Persona cliente = clienteService.buscarCliente(venta.getPersona().getIdPersona());
-            if (cliente == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cliente no encontrado.");
-            }
+	        // Validar cliente
+	        Persona cliente = clienteService.buscarCliente(venta.getPersona().getIdPersona());
+	        if (cliente == null) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cliente no encontrado.");
+	        }
 
-            // Asignar las entidades relacionadas
-            venta.setUsuario(usuario);
-            venta.setPersona(cliente);
-            venta.setEstado(true); // Asignar estado activo por defecto
+	        // Asignar las entidades relacionadas
+	        venta.setUsuario(usuario);
+	        venta.setPersona(cliente);
+	        venta.setEstado(true); // Asignar estado activo por defecto
 
-            // Guardar la venta
-            ventaService.guardarVenta(venta);
+	        // Guardar la venta
+	        ventaService.guardarVenta(venta);
 
-            return ResponseEntity.ok("Venta realizada correctamente.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar la venta.");
-        }
-    }
+	        // Retornar el ID de la venta para usarlo en los detalles
+	        return ResponseEntity.ok(""+venta.getIdVenta());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar la venta.");
+	    }
+	}
 }

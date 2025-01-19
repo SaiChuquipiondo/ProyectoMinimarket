@@ -204,22 +204,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const vueltoMontoSpan = document.getElementById("vueltoMonto");
     const montoPagoInput = document.getElementById("montoPago");
     const procesarPagoBtn = document.getElementById("procesarPago");
-    const idClienteInput = document.getElementById("idCliente");  // Asegúrate de tener un campo para obtener el ID del cliente
+    const idClienteInput = document.getElementById("idCliente");
     const fechaRegistroInput = document.getElementById("fechaRegistro");
+    
+
     // Función para calcular el monto total
     const calcularMontoTotal = () => {
         const tablaCarrito = document.querySelector("#tabla tbody");
         let total = 0;
 
+        // Crear un array para almacenar los detalles de cada producto
+        let detallesVenta = [];
+
+        
         // Recorrer las filas del carrito y sumar los totales de cada producto
         tablaCarrito.querySelectorAll("tr").forEach(fila => {
-            const cantidad = parseInt(fila.querySelector("td:nth-child(3)").textContent.trim(), 10) || 0;
-            const precioUnitario = parseFloat(fila.querySelector("td:nth-child(4)").textContent.trim()) || 0;
+            const cantidad = parseInt(fila.querySelector("td:nth-child(4)").textContent.trim(), 10) || 0;
+            const precioUnitario = parseFloat(fila.querySelector("td:nth-child(3)").textContent.trim()) || 0;
+            const productoId = fila.querySelector("td:nth-child(1)").textContent.trim();  // Suponiendo que el ID del producto está en la primera columna
+            const productoNombre = fila.querySelector("td:nth-child(2)").textContent.trim();  // Nombre del producto
+
             total += cantidad * precioUnitario;
+
+            // Agregar el detalle de la venta al array
+            detallesVenta.push({
+                producto: { idProducto: productoId },  // Suponiendo que 'idProducto' es el campo que identifica al producto
+                cantProd: cantidad,
+                importe: precioUnitario * cantidad,
+                
+            });
         });
 
         totalMontoSpan.textContent = total.toFixed(2); // Actualizar el total
         calcularVuelto(); // Recalcular el vuelto automáticamente
+
+        return detallesVenta;  // Devolver los detalles de la venta
     };
 
     // Función para calcular el vuelto
@@ -240,58 +259,109 @@ document.addEventListener("DOMContentLoaded", () => {
     // Observar cambios en la tabla del carrito (nuevas filas o cambios en las existentes)
     observer.observe(tablaCarrito, { childList: true, subtree: true });
 
+    
+ 
+    
     // Procesar el pago
     procesarPagoBtn.addEventListener("click", async () => {
-    const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
-    const montoPago = parseFloat(montoPagoInput.value) || 0;
-
-    if (montoPago < montoTotal) {
-        alert("El monto de pago no cubre el total. Por favor, ingrese un monto válido.");
-        return;
-    }
-
-    const idCliente = idClienteInput.value;
-    if (!idCliente) {
-        alert("Debe seleccionar un cliente.");
-        return;
-    }
-
-    const fechaRegistro = fechaRegistroInput.value;
-
-    // Crear el objeto de venta
-    const datosVenta = {
-        precioTotal: montoTotal,
-        fechaRegistro: fechaRegistro,
-        estado: true,
-        usuario: { idUsuario: 1 }, // Asumiendo que el ID del usuario es 1
-        persona: { idPersona: parseInt(idCliente) },
-    };
-
-    try {
-        const response = await fetch('/Ventas/Guardar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer <tu-token>'
-            },
-            body: JSON.stringify(datosVenta),
-        });
-
-        if (response.ok) {
-            alert("Venta realizada correctamente.");
-            location.reload();
-        } else {
-            const error = await response.text();
-            alert("Error al procesar la venta: " + error);
-            console.log("ERROR1:"+error);
+        const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
+        const montoPago = parseFloat(montoPagoInput.value) || 0;
+        
+        
+        if (montoPago < montoTotal) {
+            alert("El monto de pago no cubre el total. Por favor, ingrese un monto válido.");
+            return;
         }
-    } catch (error) {
-        console.error("Error al procesar la venta:", error);
-        alert("Ocurrió un error al procesar la venta.");
-        console.log("ERROR2:"+error);
+
+        const idCliente = idClienteInput.value;
+        if (!idCliente) {
+            alert("Debe seleccionar un cliente.");
+            return;
+        }
+
+        
+        
+        const fechaRegistro = fechaRegistroInput.value;
+
+        // Crear el objeto de venta
+        const detallesVenta = calcularMontoTotal();  // Obtener los detalles de los productos en el carrito
+        const datosVenta = {
+            precioTotal: montoTotal,
+            fechaRegistro: fechaRegistro,
+            estado: true,
+            usuario: { idUsuario: 1 }, // Asumiendo que el ID del usuario es 1
+            persona: { idPersona: parseInt(idCliente) },
+            detalleVentas: detallesVenta.map(detalle => {
+                return {
+                    ...detalle,
+                    venta: { idVenta: null }  ,// Inicializa el ID de la venta como null temporalmente
+                    estado:true
+                };
+            }),
+        };
+        
+      
+        try {
+            const response = await fetch('/Ventas/Guardar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer <tu-token>',
+                },
+                body: JSON.stringify(datosVenta),
+            });
+
+            if (response.ok) {
+                // Respuesta con la venta creada que incluye el ID de la venta
+                const venta = await response.json();
+                const idVenta = venta.idVenta;  // Obtener el ID de la venta recién creada
+
+                // Asignar el ID de la venta a los detalles
+                // Enviar los detalles de venta al backend
+await Promise.all(detallesVenta.map(async detalle => {
+    detalle.venta = { idVenta: idVenta };  // Asignar el idVenta a cada detalle
+
+    // Enviar el detalle al backend
+    const detalleResponse = await fetch('/Detalle_Ventas/Guardar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer <tu-token>',
+        },
+        body: JSON.stringify(detalle),
+    });
+    
+   
+    if (detalleResponse.ok) {
+        console.log("Detalle de venta guardado correctamente.");
+    } else {
+        const error = await detalleResponse.text();
+        console.error("Error al guardar detalle de venta: " + error);
     }
-});
-	
+    
+ // Procesar la venta y actualizar el stock de cada producto
+
+        
+ 
+    
+    
+ // 
+}));
+
+                alert("Venta realizada correctamente.");
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert("Error al procesar la venta: " + error);
+                console.log("ERROR1:" + error);
+            }
+        } catch (error) {
+            console.error("Error al procesar la venta:", error);
+            alert("Ocurrió un error al procesar la venta.");
+            console.log("ERROR2:" + error);
+        }
+    });
+
     // Inicializar el cálculo del total al cargar la página
     calcularMontoTotal();
 });

@@ -28,5 +28,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     List<Producto> findByCategoriaIdAndNombre(@Param("categoriaid") int categoriaId, @Param("nombreProducto") String nombreProducto);
 
     @Query(value = "UPDATE producto set stock = :stock where id = :id", nativeQuery = true)
-	Producto actualizarStock(@Param("id") int id, @Param("stock") String stock);
+    void actualizarStock(@Param("id") int id, @Param("stock") String stock);
 }

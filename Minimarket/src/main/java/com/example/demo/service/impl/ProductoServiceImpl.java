@@ -69,9 +69,27 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
 	@Override
-	public Producto actualizarStock(int id, String stock) {
-		return productoRepository.actualizarStock(id, stock);
-	}
+	public boolean actualizarStock(int idProducto,int cantidadVendida) {
+		// Verificar si el producto existe antes de intentar actualizar el stock
+        Producto producto = productoRepository.findById(idProducto).orElse(null);
+
+        if (producto == null) {
+            return false; // Producto no encontrado
+        }
+
+        // Verificar si hay suficiente stock
+        if (producto.getStock() >= cantidadVendida) {
+            // Calcular el nuevo stock
+            int nuevoStock = producto.getStock() - cantidadVendida;
+            
+            // Actualizar el stock utilizando la consulta nativa
+            productoRepository.actualizarStock(idProducto, String.valueOf(nuevoStock));
+            return true; // Stock actualizado correctamente
+        } else {
+            return false; // Stock insuficiente
+        }
+    }
+	
     
   
 }

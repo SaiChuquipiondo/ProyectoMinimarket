@@ -133,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             alert("Cantidad inválida o excede el stock disponible.");
         }
+        calcularMontoTotal();
     });
     
  // Al hacer clic en el botón "Eliminar"
@@ -226,6 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return detallesVenta;
     };
     
+   
  // Función para actualizar el stock de los productos después de la venta
     const actualizarStockProductos = async (detallesVenta) => {
         try {
@@ -279,6 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
         vueltoMontoSpan.textContent = vuelto >= 0 ? vuelto.toFixed(2) : "0.00";
     };
 
+   
     // Procesar el pago
     document.getElementById("procesarPago").addEventListener("click", async () => {
         const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
@@ -342,7 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    calcularMontoTotal();
+   
     // Generar Boleta PDF
     function generarBoletaPDF(idVenta, total) {
     	const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;

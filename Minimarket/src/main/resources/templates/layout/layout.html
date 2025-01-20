@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nombreClienteInput = document.querySelector("#nombreCliente");
     const dniInput = document.querySelector("#dniClienteInput");
     let clienteSeleccionado = null;
+    let id_venta=null;
 
     btnBuscarCliente.addEventListener("click", () => {
         const dni = dniInput.value.trim();
@@ -260,16 +261,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (!responseActualizar.ok) {
                         const error = await responseActualizar.text();
-                        console.error("Error al actualizar stock del producto;"+ idProducto,error);
+                        console.error(`Error al actualizar stock del producto ${idProducto}`,error);
                     } else {
-                        console.log("Stock actualizado para el producto ${idProducto}");
+                        console.log(`Stock actualizado para el producto: ${idProducto}`);
                     }
                 } else {
-                    console.error("Error al obtener stock para el producto ${idProducto}");
+                    console.error(`Error al obtener stock para el producto ${idProducto}`);
                 }
             }
         } catch (error) {
-            console.error("Error al actualizar el stock:", error);
+            console.error(`Error al actualizar el stock:`, error);
             alert("Ocurrió un error al actualizar el stock.");
         }
     };
@@ -319,14 +320,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(datosVenta)
             });
 
+            
             if (response.ok) {
                 const venta = await response.json();
                 const idVenta = venta.idVenta;
+                id_venta=idVenta;
                 await Promise.all(detallesVenta.map(async detalle => {
                     detalle.venta = { idVenta: idVenta };
                     await fetch('/Detalle_Ventas/Guardar', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer <tu-token>',
+                        },
                         body: JSON.stringify(detalle)
                     });
                 }));
@@ -340,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Error al procesar la venta.");
             }
         } catch (error) {
-            console.error("Error al procesar la venta:", error);
+            console.error(`Error al procesar la venta:`, error);
             alert("Ocurrió un error al procesar la venta.");
         }
     });
@@ -363,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
         doc.text(`Direccion: `, 40, 20, { align: 'center' });
         doc.text(`Telefono: `, 40, 25, { align: 'center' });
         doc.text(`BOLETA DE VENTA ELECTRONICA `, 40, 30, { align: 'center' });
-        doc.text(`BOLETA N°: ${idVenta}`, 40, 35, { align: 'center' });
+        //doc.text(`BOLETA N°: ${id_venta}`, 40, 35, { align: 'center' });
         doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 40, 40, { align: 'center' });
      // Información del cliente
         doc.setFontSize(8);

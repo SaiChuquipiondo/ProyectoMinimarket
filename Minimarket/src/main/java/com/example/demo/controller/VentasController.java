@@ -95,6 +95,7 @@ public class VentasController {
 	}
 	
 	@PostMapping("/Guardar")
+	@ResponseBody
 	public ResponseEntity<String> guardarVenta(@RequestBody Venta venta) {
 	    try {
 	        // Validar usuario

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.entity.Detalle_Venta;
 import com.example.demo.entity.Persona;
@@ -35,6 +36,7 @@ public class Detalles_VentasController {
 	private ProductoService productoService;
 	
 	@PostMapping("/Guardar")
+	@ResponseBody
 	public ResponseEntity<String> guardarDetalleVenta(@RequestBody Detalle_Venta detalleventa) {
 	    try {
 	        // Asegurarse de que el idVenta no sea null

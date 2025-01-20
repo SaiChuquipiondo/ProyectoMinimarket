@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.demo.config.AESPasswordEncoder;
 import com.example.demo.entity.Persona;
 import com.example.demo.entity.TipoUsuario;
 import com.example.demo.entity.usuario;
@@ -25,9 +27,12 @@ public class UsuarioController {
     @Qualifier("usuarioService")
     private UsuarioService usuarioService;
 
+    private AESPasswordEncoder passwordEncoder = new AESPasswordEncoder();
+
     @GetMapping("/Listar")
     public String Listar(Model model) {
         List<usuario> lista = usuarioService.listarUsuarios();
+
         model.addAttribute("usuario", lista);
         return "Admin/Usuario/ListarUsuarios";
     }
@@ -44,7 +49,8 @@ public class UsuarioController {
     }
 
     @PostMapping("/Guardar")
-    public String Guardar(usuario usuario) {
+    public String Guardar(@ModelAttribute("usuario") usuario usuario) {
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setEstado(true);
         usuarioService.guardarUsuario(usuario);
         return "redirect:/Usuario/Listar";
@@ -62,11 +68,13 @@ public class UsuarioController {
     }
 
     @PostMapping("/Editar/{id}")
-    public String Editar(@PathVariable("id") int id, usuario usuario) {
+    public String Editar(@PathVariable("id") int id, usuario usuario, Model model) {
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setIdUsuario(id);
         usuario.setEstado(true);
         usuarioService.actualizarUsuario(usuario);
         return "redirect:/Usuario/Listar";
+
     }
 
     @GetMapping("/Eliminar/{id}")

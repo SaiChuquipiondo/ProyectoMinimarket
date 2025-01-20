@@ -11,9 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "usuario")
+@Data
 public class usuario {
 
     @Id
@@ -30,7 +32,7 @@ public class usuario {
     @Column(name = "estado")
     private Boolean estado;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "id_tipousuario")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private TipoUsuario tipoUsuario;

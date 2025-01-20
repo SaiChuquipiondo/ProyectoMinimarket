@@ -1,11 +1,19 @@
 package com.example.demo.service.impl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.config.AESPasswordEncoder;
 import com.example.demo.entity.Persona;
 import com.example.demo.entity.TipoUsuario;
 import com.example.demo.entity.usuario;
@@ -47,6 +55,30 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public List<TipoUsuario> listarTipos() {
         return usuarioRepository.ListarTipos();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        usuario user = usuarioRepository.findByUsername(username);
+        if (user == null) {
+            System.out.println("Usuario no encontrado");
+            throw new UsernameNotFoundException("Usuario no encontrado");
+        }
+        return new User(user.getUsername(), user.getPassword(), mapearAutoridadesRoles(user.getTipoUsuario()));
+    }
+
+    private Collection<? extends GrantedAuthority> mapearAutoridadesRoles(TipoUsuario rol) {
+        return Collections.singleton(new SimpleGrantedAuthority(rol.getNombre()));
+    }
+
+    @Override
+    public boolean authenticateUser(String username, String rawPassword) {
+        usuario user = usuarioRepository.findByUsername(username);
+        if (user == null) {
+            System.out.println("Usuario falido");
+            return false;
+        }
+        return new AESPasswordEncoder().matches(rawPassword, user.getPassword());
     }
 
 }

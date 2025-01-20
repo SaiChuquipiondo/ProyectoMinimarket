@@ -23,7 +23,6 @@
 							<tr>
 								<th scope="col">ID</th>
 								<th scope="col">Username</th>
-                                <th scope="col">Password</th>
                                 <th scope="col">Personal</th>
 								<th scope="col">Tipo Usuario</th>
 								<th scope="col">Estado</th>
@@ -34,7 +33,6 @@
 							<tr th:each="Usuario : ${usuario}">
                                 <td scope="row" th:text="${Usuario.idUsuario}"></td>
                                 <td th:text="${Usuario.username}"></td>
-                                <td th:text="${Usuario.password}"></td>
                                 <td th:text="${Usuario.persona.nombres + ' ' + Usuario.persona.apellidos}"></td>
                                 <td th:text="${Usuario.tipoUsuario.nombre}"></td>
 								<td>

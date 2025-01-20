@@ -41,6 +41,7 @@ public class PersonalController {
 
     @PostMapping("/Guardar")
     public String guardarPersonal(@ModelAttribute("personal") Persona persona) {
+        persona.setEstado(true);
         persona.setTipo(TipoPersona.PERSONAL);
         personalService.guardarPersonal(persona);
         return "redirect:/Personal/Listar";

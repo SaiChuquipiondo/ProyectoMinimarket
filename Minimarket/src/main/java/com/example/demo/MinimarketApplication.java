@@ -9,6 +9,7 @@ public class MinimarketApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MinimarketApplication.class, args);
+
 	}
 
 }

@@ -13,8 +13,8 @@
 	rel="stylesheet">
 
 
-<link rel="stylesheet" th:href="@{/assets/css/Estilos.css}" />
-<title>Administrador</title>
+        <link rel="stylesheet" th:href="@{/assets/css/Estilos.css}" />
+    <title>Minimarket JyK</title>
 
 <!-- Cargar el script de jsPDF -->
 <script
@@ -37,13 +37,7 @@
 	}
 </script>
 
-<script>
-    
-</script>
 
-<script>
-
-</script>
 
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -85,6 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let productoSeleccionado = null;
     let filaSeleccionadaIzquierda = null;
+    
+    <!-- /#page-content-wrapper -->
+    
+
 
     
     
@@ -466,151 +464,148 @@ tr.out-of-stock {
 </style>
 <body>
 	<div class="d-flex" id="wrapper">
-		<!-- Sidebar -->
-		<div class="bg-white" id="sidebar-wrapper">
-			<div
-				class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold border-bottom">
+    <!-- Sidebar -->
+    <div class="bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold border-bottom">
+       
+       <a  href="/JyK/Home">
+               <i class="fas fa-store me-2"></i>Minimarket Jyk
+       </a>
+   </div>
+   
+        
+   <div class="list-group list-group-flush my-3">
+    <!-- Inicio -->
+    <a th:href="@{/Ventas/Listar}" class="list-group-item list-group-item-action bg-transparent second-text active">
+        <i class="fas fa-home me-2"></i>Ventas
+    </a>
 
-				<a href="/Administrador/Home"> <i class="fas fa-store me-2"></i>Minimarket
-					Jyk
-				</a>
-			</div>
-
-
-			<div class="list-group list-group-flush my-3">
-				<!-- Inicio -->
-				<a th:href="@{/Ventas/Listar}"
-					class="list-group-item list-group-item-action bg-transparent second-text active">
-					<i class="fas fa-home me-2"></i>Ventas
-				</a>
-
-				<!-- Empleados -->
-				<a href="#empleadosSubmenu"
-					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-					data-bs-toggle="collapse"> <i class="fas fa-users me-2"></i>Personal
-				</a>
-				<ul id="empleadosSubmenu" class="collapse list-unstyled ms-3">
-					<li><a th:href="@{/Personal/Listar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-list me-2"></i>Listar Personal
-					</a></li>
-					<li><a th:href="@{/Personal/Agregar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-user-plus me-2"></i>Agregar Empleado
-					</a></li>
-				</ul>
-				<!-- Clientes -->
-				<a href="#clientesSubmenu"
-					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-					data-bs-toggle="collapse"> <i class="fas fa-user-friends me-2"></i>Clientes
-				</a>
-				<ul id="clientesSubmenu" class="collapse list-unstyled ms-3">
-					<li><a th:href="@{/Cliente/Listar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-users me-2"></i>Listado de Clientes
-					</a></li>
-					<li><a th:href="@{/Cliente/Agregar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-user-plus me-2"></i>Agregar Cliente
-					</a></li>
-				</ul>
-
-
-
-				<!-- Inventario -->
-				<a href="#inventarioSubmenu"
-					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-					data-bs-toggle="collapse"> <i class="fas fa-boxes me-2"></i>Inventario
-				</a>
-				<ul id="inventarioSubmenu" class="collapse list-unstyled ms-3">
-					<li><a th:href="@{/Producto/Listar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-box me-2"></i>Productos
-					</a></li>
-					<li><a th:href="@{/Categoria/Listar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-tags me-2"></i>Categorías
-					</a></li>
-					<li><a th:href="@{/Producto/ControldeStock}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-clipboard-list me-2"></i>Control de Stock
-					</a></li>
-				</ul>
-				<!-- Usuarios -->
-				<a href="#usuariosSubmenu"
-					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-					data-bs-toggle="collapse"> <i class="fas fa-users me-2"></i>Usuarios
-				</a>
-				<ul id="usuariosSubmenu" class="collapse list-unstyled ms-3">
-					<li><a th:href="@{/Usuario/Listar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-user me-2"></i>Lista de Usuarios
-					</a></li>
-					<li><a th:href="@{/Tipo/Listar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-user-shield me-2"></i>Roles
-					</a></li>
-				</ul>
+    <!-- Empleados -->
+    <a href="#empleadosSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+        <i class="fas fa-users me-2"></i>Personal
+    </a>
+    <ul id="empleadosSubmenu" class="collapse list-unstyled ms-3">
+        <li>
+            <a th:href="@{/Personal/Listar}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-list me-2"></i>Listar Personal
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/Personal/Agregar}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-user-plus me-2"></i>Agregar Empleado
+            </a>
+        </li>
+    </ul>
+    <!-- Clientes -->
+    <a href="#clientesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+        <i class="fas fa-user-friends me-2"></i>Clientes
+    </a>
+    <ul id="clientesSubmenu" class="collapse list-unstyled ms-3">
+        <li>
+            <a th:href="@{/Cliente/Listar}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-users me-2"></i>Listado de Clientes
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/Cliente/Agregar}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-user-plus me-2"></i>Agregar Cliente
+            </a>
+        </li>
+    </ul>
+    
 
 
+    <!-- Inventario -->
+    <a href="#inventarioSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+        <i class="fas fa-boxes me-2"></i>Inventario
+    </a>
+    <ul id="inventarioSubmenu" class="collapse list-unstyled ms-3">
+        <li>
+            <a th:href="@{/Producto/Listar}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-box me-2"></i>Productos
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/Categoria/Listar}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-tags me-2"></i>Categorías
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/Producto/ControldeStock}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-clipboard-list me-2"></i>Control de Stock
+            </a>
+        </li>
+    </ul>
+        <!-- Usuarios -->
+    <a href="#usuariosSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+    <i class="fas fa-users me-2"></i>Usuarios
+    </a>
+    <ul id="usuariosSubmenu" class="collapse list-unstyled ms-3">
+    <li>
+        <a th:href="@{/Usuario/Listar}" class="list-group-item list-group-item-action bg-transparent">
+            <i class="fas fa-user me-2"></i>Lista de Usuarios
+        </a>
+    </li>
+    <li>
+        <a th:href="@{/Tipo/Listar}" class="list-group-item list-group-item-action bg-transparent">
+            <i class="fas fa-user-shield me-2"></i>Roles
+        </a>
+    </li>
+    </ul>
 
-				<!-- Reportes -->
-				<a href="#reportesSubmenu"
-					class="list-group-item list-group-item-action bg-transparent second-text fw-bold"
-					data-bs-toggle="collapse"> <i class="fas fa-chart-line me-2"></i>Reportes
-				</a>
-				<ul id="reportesSubmenu" class="collapse list-unstyled ms-3">
-					<li><a th:href="@{/Reporte/Listar}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-file-alt me-2"></i>Lista de Reportes
-					</a></li>
-					<li><a th:href="@{/Reporte/ventas}"
-						class="list-group-item list-group-item-action bg-transparent">
-							<i class="fas fa-file-alt me-2"></i>Reportes de Ventas
-					</a></li>
-				</ul>
-			</div>
+    
 
+    <!-- Reportes -->
+    <a href="#reportesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+        <i class="fas fa-chart-line me-2"></i>Reportes
+    </a>
+    <ul id="reportesSubmenu" class="collapse list-unstyled ms-3">
+        <li>
+            <a th:href="@{/Reporte/ventas}" class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-file-alt me-2"></i>Reportes de Ventas
+            </a>
+        </li>
+    </ul>
+</div>
+    </div>
 
-		</div>
-		<!-- /#sidebar-wrapper -->
+    
+        <!-- /#sidebar-wrapper -->
 
-		<!-- Page Content -->
-		<div id="page-content-wrapper">
-			<nav
-				class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
-				<div class="d-flex align-items-center">
-					<i class="fas fa-align-left primary-text fs-4 me-3"
-						id="menu-toggle"></i>
-				</div>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
+                </div>
 
-				<button class="navbar-toggler" type="button"
-					data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent" aria-expanded="false"
-					aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-						<li class="nav-item dropdown"><a
-							class="nav-link dropdown-toggle second-text fw-bold" href="#"
-							id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-							aria-expanded="false"> <i class="fas fa-user me-2"></i>Sai
-								Chuquipiondo
-						</a>
-							<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-								<li><a class="dropdown-item" href="#">Opciones</a></li>
-								<li><a class="dropdown-item" href="#">Cerrar Sesion</a></li>
-							</ul></li>
-					</ul>
-				</div>
-			</nav>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-2"></i>
+                                 Cuenta
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" th:href="@{/logout}">Cerrar Sesion</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
-			<div class="container-fluid px-4" layout:fragment="page-content">
-			</div>
-		</div>
-	</div>
+            <div class="container-fluid px-4"layout:fragment="page-content">
+            </div>
+        </div>
+
+    </div>
 	<!-- /#page-content-wrapper -->
 
 

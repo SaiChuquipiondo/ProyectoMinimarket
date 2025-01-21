@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.demo.Reportes.ReporteExcel;
-import com.example.demo.entity.Producto;
+
 import com.example.demo.entity.Venta;
-import com.example.demo.service.ProductoService;
+
 import com.example.demo.service.VentaService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +30,7 @@ public class ReporteController {
     @Autowired
     @Qualifier("ventaService")
     private VentaService ventaService;
-    
+
     @GetMapping("/Listar")
     public String ListarReporte(Model model) {
         List<Venta> listarVentas = ventaService.ListarVenta();
@@ -45,7 +44,6 @@ public class ReporteController {
         return modelAndView;
     }
 
-    
     @PostMapping("/ventas/excel")
     public void generarReporteExcel(
             HttpServletResponse response,
@@ -74,6 +72,5 @@ public class ReporteController {
         ReporteExcel excelGenerator = new ReporteExcel();
         excelGenerator.generarExcel(ventas, response);
     }
-    
-    
+
 }

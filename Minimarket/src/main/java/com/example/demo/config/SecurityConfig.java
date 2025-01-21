@@ -31,12 +31,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF si no se usa en formularios
+                .csrf(csrf -> csrf.disable())
 
                 .authorizeRequests(auth -> auth
-                        // Permitir acceso público a recursos estáticos y algunas rutas
+
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/login").permitAll()
-                        // Rutas protegidas para 'Vendedor'
+
                         .requestMatchers("/Ventas/**", "/Cliente/**").hasAnyAuthority("Vendedor", "Administrador")
 
                         .requestMatchers("/Producto/**", "/Categoria/**", "/Personal/**",

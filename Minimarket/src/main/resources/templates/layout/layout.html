@@ -11,445 +11,9 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
 	rel="stylesheet">
-
-
         <link rel="stylesheet" th:href="@{/assets/css/Estilos.css}" />
     <title>Minimarket JyK</title>
 
-<!-- Cargar el script de jsPDF -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<!-- Cargar el script de Bootstrap -->
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-	function validarFechas() {
-		var fechaInicio = document.getElementById('FechaInicio').value;
-		var fechaFin = document.getElementById('FechaFin').value;
-
-		if (new Date(fechaInicio) > new Date(fechaFin)) {
-			alert('La fecha de inicio no puede ser posterior a la fecha de fin.');
-			return false; // Evita que el formulario se envíe
-		}
-		return true; // Permite enviar el formulario
-	}
-</script>
-
-
-
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const btnBuscarCliente = document.querySelector("#btnBuscarCliente");
-    const dniClienteInput = document.querySelector("#dniCliente");
-    const idClienteInput = document.querySelector("#idCliente");
-    const nombreClienteInput = document.querySelector("#nombreCliente");
-    const dniInput = document.querySelector("#dniClienteInput");
-    let clienteSeleccionado = null;
-    let id_venta=null;
-
-    btnBuscarCliente.addEventListener("click", () => {
-        const dni = dniInput.value.trim();
-        if (!dni) {
-            alert("Por favor, ingrese un DNI válido.");
-            return;
-        }
-        fetch(`/Ventas/BuscarClientePorDni?dni=${dni}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("No se encontró un cliente con el DNI ingresado.");
-                }
-                return response.json();
-            })
-            .then(cliente => {
-                idClienteInput.value = cliente.idPersona;
-                dniClienteInput.value = cliente.dni;
-                nombreClienteInput.value = cliente.nombres;
-                clienteSeleccionado = cliente;
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert(error.message);
-            });
-    });
-
-    let productoSeleccionado = null;
-    let filaSeleccionadaIzquierda = null;
-    
-    <!-- /#page-content-wrapper -->
-    
-
-
-    
-    
-    // Manejo de productos
-    document.querySelectorAll("#productosLista tr").forEach(fila => {
-        fila.addEventListener("click", () => {
-            document.querySelectorAll("#productosLista tr").forEach(f => f.classList.remove("selected"));
-            fila.classList.add("selected");
-
-            productoSeleccionado = {
-                id: fila.querySelector("td:nth-child(1)").textContent.trim(),
-                nombre: fila.querySelector("td:nth-child(2)").textContent.trim(),
-                precio: fila.querySelector("td:nth-child(3)").textContent.trim(),
-                stock: parseInt(fila.querySelector("td:nth-child(4)").textContent.trim(), 10),
-                filaElement: fila
-            };
-        });
-    });
-    
-    // Seleccionar una fila de la tabla izquierda
-    const tablaIzquierda = document.querySelector("#tabla tbody");
-    tablaIzquierda.addEventListener("click", (e) => {
-        const filasIzquierda = tablaIzquierda.querySelectorAll("tr");
-        filasIzquierda.forEach(f => f.classList.remove("selected")); // Desmarcar las filas previas
-        filaSeleccionadaIzquierda = e.target.closest("tr");
-        if (filaSeleccionadaIzquierda) {
-            filaSeleccionadaIzquierda.classList.add("selected");
-        }
-    });
-
-    // Agregar producto al carrito
-    document.querySelector(".btn-agregar").addEventListener("click", () => {
-        if (!productoSeleccionado) {
-            alert("Por favor, selecciona un producto antes de agregarlo al carrito.");
-            return;
-        }
-
-        const cantidad = prompt(`INGRESA LA CANTIDAD DE ${productoSeleccionado.nombre} (STOCK DISPONIBLE: ${productoSeleccionado.stock})`);
-        if (cantidad && parseInt(cantidad, 10) > 0 && parseInt(cantidad, 10) <= productoSeleccionado.stock) {
-            const cantidadNumerica = parseInt(cantidad, 10);
-            agregarAlCarrito(productoSeleccionado, cantidadNumerica);
-            productoSeleccionado.stock -= cantidadNumerica;
-            productoSeleccionado.filaElement.querySelector("td:nth-child(4)").textContent = productoSeleccionado.stock;
-            if (productoSeleccionado.stock === 0) {
-                productoSeleccionado.filaElement.classList.add("out-of-stock");
-            }
-        } else {
-            alert("Cantidad inválida o excede el stock disponible.");
-        }
-        calcularMontoTotal();
-    });
-    
- // Al hacer clic en el botón "Eliminar"
-    document.querySelector(".btn-eliminar").addEventListener("click", () => {
-        if (!filaSeleccionadaIzquierda) {
-            alert("Por favor, selecciona un producto antes de eliminar.");
-            return;
-        }
-
-        // Preguntar al usuario si está seguro de eliminar
-        const confirmarEliminacion = confirm("¿Estás seguro de que deseas eliminar este producto?");
-
-        if (confirmarEliminacion) {
-            // Obtener datos de la fila seleccionada
-            const idProducto = filaSeleccionadaIzquierda.querySelector("td:nth-child(1)").textContent.trim();
-            const cantidadEliminada = parseInt(filaSeleccionadaIzquierda.querySelector("td:nth-child(3)").textContent.trim(), 10);
-
-            // Eliminar la fila de la tabla izquierda
-            filaSeleccionadaIzquierda.remove();
-            filaSeleccionadaIzquierda = null;
-
-            // Actualizar el stock en la tabla derecha
-            const tablaDerecha = document.querySelector("#productosLista");
-            const filaProductoDerecha = Array.from(tablaDerecha.querySelectorAll("tr")).find(
-                fila => fila.querySelector("td:nth-child(1)").textContent.trim() === idProducto
-            );
-
-            if (filaProductoDerecha) {
-                const stockActual = parseInt(filaProductoDerecha.querySelector("td:nth-child(4)").textContent.trim(), 10);
-                filaProductoDerecha.querySelector("td:nth-child(4)").textContent = stockActual + cantidadEliminada;
-
-                // Rehabilitar la fila si estaba agotada
-                filaProductoDerecha.classList.remove("out-of-stock");
-            }
-
-            alert("Producto eliminado correctamente.");
-        } else {
-            alert("Operación cancelada.");
-        }
-    });
-
-    // Agregar al carrito
-    function agregarAlCarrito(producto, cantidad) {
-        const tablaCarrito = document.querySelector("#tabla tbody");
-        const filaExistente = Array.from(tablaCarrito.querySelectorAll("tr")).find(
-            fila => fila.querySelector("td:nth-child(1)").textContent.trim() === producto.id
-        );
-        if (filaExistente) {
-            const cantidadActual = parseInt(filaExistente.querySelector("td:nth-child(3)").textContent.trim(), 10);
-            filaExistente.querySelector("td:nth-child(3)").textContent = cantidadActual + cantidad;
-        } else {
-            const fila = document.createElement("tr");
-            fila.innerHTML = `
-                <td>${producto.id}</td>
-                <td>${producto.nombre}</td>
-                <td>${producto.precio}</td>
-                <td>${cantidad}</td>
-            `;
-            tablaCarrito.appendChild(fila);
-        }
-    }
-
-    // Calcular el monto total
-    const totalMontoSpan = document.getElementById("totalMonto");
-    const vueltoMontoSpan = document.getElementById("vueltoMonto");
-    const montoPagoInput = document.getElementById("montoPago");
-
-    
-    
-    const calcularMontoTotal = () => {
-        const tablaCarrito = document.querySelector("#tabla tbody");
-        let total = 0;
-        let detallesVenta = [];
-
-        tablaCarrito.querySelectorAll("tr").forEach(fila => {
-            const cantidad = parseInt(fila.querySelector("td:nth-child(4)").textContent.trim(), 10);
-            const precioUnitario = parseFloat(fila.querySelector("td:nth-child(3)").textContent.trim());
-            total += cantidad * precioUnitario;
-            detallesVenta.push({
-                producto: {
-                    idProducto: fila.querySelector("td:nth-child(1)").textContent.trim(),
-                    nombre: fila.querySelector("td:nth-child(2)").textContent.trim()
-                },
-                cantProd: cantidad,
-                importe: precioUnitario * cantidad
-            });
-        });
-
-        totalMontoSpan.textContent = total.toFixed(2);
-        calcularVuelto();
-        return detallesVenta;
-    };
-    
-   
- // Función para actualizar el stock de los productos después de la venta
-    const actualizarStockProductos = async (detallesVenta) => {
-        try {
-            // Iterar sobre los detalles de la venta para actualizar el stock de cada producto
-            for (const detalle of detallesVenta) {
-                const idProducto = parseInt(detalle.producto.idProducto);
-                const cantidadVendida = detalle.cantProd;
-
-                // Realizar la solicitud para obtener el stock actual del producto
-                const responseProducto = await fetch('/Producto/ObtenerStock?idProducto=' + idProducto);
-                const dataProducto = await responseProducto.json();
-
-                if (responseProducto.ok) {
-                    const stockActual = dataProducto.stock; // Stock actual del producto
-
-                    // Calcular el nuevo stock
-                    const nuevoStock = stockActual - cantidadVendida;
-
-                    // Enviar la actualización del stock al backend
-                    const responseActualizar = await fetch('/Producto/ActualizarStock', {
-                    method: "POST", // O PUT, dependiendo de cómo lo maneje tu API
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ 
-                        idProducto: idProducto, 
-                        stock: nuevoStock 
-                    }),
-                });
-
-                    if (!responseActualizar.ok) {
-                        const error = await responseActualizar.text();
-                        console.error(`Error al actualizar stock del producto ${idProducto}`,error);
-                    } else {
-                        console.log(`Stock actualizado para el producto: ${idProducto}`);
-                    }
-                } else {
-                    console.error(`Error al obtener stock para el producto ${idProducto}`);
-                }
-            }
-        } catch (error) {
-            console.error(`Error al actualizar el stock:`, error);
-            alert("Ocurrió un error al actualizar el stock.");
-        }
-    };
-
-    const calcularVuelto = () => {
-        const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
-        const montoPago = parseFloat(montoPagoInput.value) || 0;
-        const vuelto = montoPago - montoTotal;
-        vueltoMontoSpan.textContent = vuelto >= 0 ? vuelto.toFixed(2) : "0.00";
-    };
-
-   
-    // Procesar el pago
-    document.getElementById("procesarPago").addEventListener("click", async () => {
-        const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
-        const montoPago = parseFloat(montoPagoInput.value) || 0;
-        if (montoPago < montoTotal) {
-            alert("El monto de pago no cubre el total. Por favor, ingrese un monto válido.");
-            return;
-        }
-        if (!idClienteInput.value) {
-            alert("Debe seleccionar un cliente.");
-            return;
-        }
-
-        const detallesVenta = calcularMontoTotal();
-        const datosVenta = {
-            precioTotal: montoTotal,
-            fechaRegistro: new Date().toISOString(),
-            estado: true,
-            usuario: { idUsuario: 1 },
-            persona: { idPersona: parseInt(idClienteInput.value) },
-            detalleVentas: detallesVenta.map(detalle => ({
-                ...detalle,
-                venta: { idVenta: null },
-                estado: true
-            }))
-        };
-
-        try {
-            const response = await fetch('/Ventas/Guardar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer <tu-token>',
-                },
-                body: JSON.stringify(datosVenta)
-            });
-
-            
-            if (response.ok) {
-                const venta = await response.json();
-                const idVenta = venta.idVenta;
-                id_venta=idVenta;
-                await Promise.all(detallesVenta.map(async detalle => {
-                    detalle.venta = { idVenta: idVenta };
-                    await fetch('/Detalle_Ventas/Guardar', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer <tu-token>',
-                        },
-                        body: JSON.stringify(detalle)
-                    });
-                }));
-	
-                alert("Venta realizada correctamente.");
-                // Actualizar el stock después de guardar la venta
-                await actualizarStockProductos(detallesVenta);
-                generarBoletaPDF(idVenta, montoTotal);
-                
-            } else {
-                alert("Error al procesar la venta.");
-            }
-        } catch (error) {
-            console.error(`Error al procesar la venta:`, error);
-            alert("Ocurrió un error al procesar la venta.");
-        }
-    });
-
-   
-    // Generar Boleta PDF
-    function generarBoletaPDF(idVenta, total) {
-    	const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', [80, 200]);
-        
-     // Título del ticket
-        doc.setFont('Times', 'bold');
-        doc.setFontSize(14);
-        doc.text('MINIMARKET J Y K', 40, 10, { align: 'center' });
-        
-     // Información de la venta
-        doc.setFontSize(10);
-        doc.text(`RUC: `, 40, 15, { align: 'center' });
-        doc.text(`Direccion: `, 40, 20, { align: 'center' });
-        doc.text(`Telefono: `, 40, 25, { align: 'center' });
-        doc.text(`BOLETA DE VENTA ELECTRONICA `, 40, 30, { align: 'center' });
-        //doc.text(`BOLETA N°: ${id_venta}`, 40, 35, { align: 'center' });
-        doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 40, 40, { align: 'center' });
-     // Información del cliente
-        doc.setFontSize(8);
-        doc.text(`Cliente: ${clienteSeleccionado ? clienteSeleccionado.nombres : 'N/A'}`, 5, 45);
-        doc.text(`DNI: ${clienteSeleccionado ? clienteSeleccionado.dni : 'N/A'}`, 5, 50);
-
-     // Línea separadora
-        doc.setLineWidth(0.5);
-        doc.line(5, 55, 75, 55); // Ajustar la línea según el nuevo tamaño
-        
-     // Cabecera de la tabla de productos
-        doc.setFont('Times', 'bold');
-        doc.setFontSize(10);
-        doc.setTextColor(255, 255, 255); // Color de texto blanco
-        doc.setFillColor(133, 193, 233); // Color de fondo (similar al Java)
-        doc.rect(5, 56, 70, 13, 'F'); // Fondo de la celda
-        
-        //let yPosition = 55;
-        doc.text('Producto', 7, 65);
-        doc.text('Cantidad', 35, 65);
-        doc.text('Precio', 70, 65, { align: 'right' });
-        
-     // Línea debajo de la cabecera
-        doc.setLineWidth(0.5);
-        doc.line(5, 70, 75, 70);
-
-     // Detalles de los productos
-        let yPosition = 75;
-        const carrito = Array.from(document.querySelectorAll("#tabla tbody tr")).map(row => {
-            
-        	return {
-                producto: {
-                    nombre: row.querySelector("td:nth-child(2)").textContent,
-                    precio:row.querySelector("td:nth-child(3)").textContent
-                },
-                cantidad: row.querySelector("td:nth-child(4)").textContent,
-                total: (parseFloat(row.querySelector("td:nth-child(3)").textContent) * parseInt(row.querySelector("td:nth-child(4)").textContent)).toFixed(2)
-            };
-        });
-
-        carrito.forEach(item => {
-        	doc.setTextColor(0, 0, 0); // Texto negro
-            doc.text(item.producto.nombre, 7, yPosition);
-            doc.text(item.cantidad, 35, yPosition);
-            doc.text(`$${item.producto.precio}`, 70, yPosition, { align: 'right' });
-            yPosition += 5;
-        });
-        
-     // Línea separadora entre la tabla de productos y el total
-        doc.setLineWidth(0.5);
-        doc.line(5, yPosition, 75, yPosition);
-
-     // Total
-        doc.setFontSize(10);
-        yPosition += 10;
-        doc.text(`Total: $${montoTotal.toFixed(2)}`, 10, yPosition);
-        
-     // Pie de la boleta
-        yPosition += 10;
-        doc.setFontSize(8);
-        doc.text('¡Gracias por su compra!', 40, yPosition + 10, { align: 'center' });
-
-        const pdfData = doc.output('blob');
-        const pdfUrl = URL.createObjectURL(pdfData);
-        window.open(pdfUrl, '_blank');
-    }
-});
-</script>
-
-<style>
-tr.selected {
-	background-color: #d1ecf1;
-	cursor: pointer;
-}
-</style>
-<style>
-tr.out-of-stock {
-	background-color: #f8d7da;
-	pointer-events: none;
-	color: #6c757d;
-}
-</style>
 <style>
 tr.selected {
 	background-color: #d4edda;
@@ -462,6 +26,9 @@ tr.out-of-stock {
 	color: #6c757d;
 }
 </style>
+
+</head>
+
 <body>
 	<div class="d-flex" id="wrapper">
     <!-- Sidebar -->
@@ -497,7 +64,7 @@ tr.out-of-stock {
         </li>
     </ul>
     <!-- Clientes -->
-    <a href="#clientesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold" data-bs-toggle="collapse">
+    <a href="#clientesSubmenu" class="list-group-item list-group-item-action bg-transparent second-text fw-bold active" data-bs-toggle="collapse" data-bs-target="#clientesSubmenu" aria-expanded="true" aria-controls="clientesSubmenu">
         <i class="fas fa-user-friends me-2"></i>Clientes
     </a>
     <ul id="clientesSubmenu" class="collapse list-unstyled ms-3">
@@ -560,6 +127,10 @@ tr.out-of-stock {
         <i class="fas fa-chart-line me-2"></i>Reportes
     </a>
     <ul id="reportesSubmenu" class="collapse list-unstyled ms-3">
+        <li><a th:href="@{/Reporte/Listar}"
+            class="list-group-item list-group-item-action bg-transparent">
+                <i class="fas fa-file-alt me-2"></i>Lista de Reportes
+        </a></li>
         <li>
             <a th:href="@{/Reporte/ventas}" class="list-group-item list-group-item-action bg-transparent">
                 <i class="fas fa-file-alt me-2"></i>Reportes de Ventas
@@ -625,6 +196,436 @@ tr.out-of-stock {
 			el.classList.toggle("toggled");
 		};
 	</script>
+    <!-- Cargar el script de jsPDF -->
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Cargar el script de Bootstrap -->
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<Script>
+var collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');
+collapseElements.forEach(function (el) {
+    el.addEventListener('click', function () {
+        var target = el.getAttribute('data-bs-target');
+        var parent = document.querySelector(target);
+        var expanded = el.getAttribute('aria-expanded') === 'true';
+        el.setAttribute('aria-expanded', !expanded);
+    });
+});
+</script>
+<script>
+function validarFechas() {
+    var fechaInicio = document.getElementById('FechaInicio').value;
+    var fechaFin = document.getElementById('FechaFin').value;
+
+    if (new Date(fechaInicio) > new Date(fechaFin)) {
+        alert('La fecha de inicio no puede ser posterior a la fecha de fin.');
+        return false; // Evita que el formulario se envíe
+    }
+    return true; // Permite enviar el formulario
+}
+</script>
+
+
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+const btnBuscarCliente = document.querySelector("#btnBuscarCliente");
+const dniClienteInput = document.querySelector("#dniCliente");
+const idClienteInput = document.querySelector("#idCliente");
+const nombreClienteInput = document.querySelector("#nombreCliente");
+const dniInput = document.querySelector("#dniClienteInput");
+let clienteSeleccionado = null;
+let id_venta=null;
+
+btnBuscarCliente.addEventListener("click", () => {
+    const dni = dniInput.value.trim();
+    if (!dni) {
+        alert("Por favor, ingrese un DNI válido.");
+        return;
+    }
+    fetch(`/Ventas/BuscarClientePorDni?dni=${dni}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("No se encontró un cliente con el DNI ingresado.");
+            }
+            return response.json();
+        })
+        .then(cliente => {
+            idClienteInput.value = cliente.idPersona;
+            dniClienteInput.value = cliente.dni;
+            nombreClienteInput.value = cliente.nombres;
+            clienteSeleccionado = cliente;
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert(error.message);
+        });
+});
+
+let productoSeleccionado = null;
+let filaSeleccionadaIzquierda = null;
+
+<!-- /#page-content-wrapper -->
+
+
+
+
+
+// Manejo de productos
+document.querySelectorAll("#productosLista tr").forEach(fila => {
+    fila.addEventListener("click", () => {
+        document.querySelectorAll("#productosLista tr").forEach(f => f.classList.remove("selected"));
+        fila.classList.add("selected");
+
+        productoSeleccionado = {
+            id: fila.querySelector("td:nth-child(1)").textContent.trim(),
+            nombre: fila.querySelector("td:nth-child(2)").textContent.trim(),
+            precio: fila.querySelector("td:nth-child(3)").textContent.trim(),
+            stock: parseInt(fila.querySelector("td:nth-child(4)").textContent.trim(), 10),
+            filaElement: fila
+        };
+    });
+});
+
+// Seleccionar una fila de la tabla izquierda
+const tablaIzquierda = document.querySelector("#tabla tbody");
+tablaIzquierda.addEventListener("click", (e) => {
+    const filasIzquierda = tablaIzquierda.querySelectorAll("tr");
+    filasIzquierda.forEach(f => f.classList.remove("selected")); // Desmarcar las filas previas
+    filaSeleccionadaIzquierda = e.target.closest("tr");
+    if (filaSeleccionadaIzquierda) {
+        filaSeleccionadaIzquierda.classList.add("selected");
+    }
+});
+
+// Agregar producto al carrito
+document.querySelector(".btn-agregar").addEventListener("click", () => {
+    if (!productoSeleccionado) {
+        alert("Por favor, selecciona un producto antes de agregarlo al carrito.");
+        return;
+    }
+
+    const cantidad = prompt(`INGRESA LA CANTIDAD DE ${productoSeleccionado.nombre} (STOCK DISPONIBLE: ${productoSeleccionado.stock})`);
+    if (cantidad && parseInt(cantidad, 10) > 0 && parseInt(cantidad, 10) <= productoSeleccionado.stock) {
+        const cantidadNumerica = parseInt(cantidad, 10);
+        agregarAlCarrito(productoSeleccionado, cantidadNumerica);
+        productoSeleccionado.stock -= cantidadNumerica;
+        productoSeleccionado.filaElement.querySelector("td:nth-child(4)").textContent = productoSeleccionado.stock;
+        if (productoSeleccionado.stock === 0) {
+            productoSeleccionado.filaElement.classList.add("out-of-stock");
+        }
+    } else {
+        alert("Cantidad inválida o excede el stock disponible.");
+    }
+    calcularMontoTotal();
+});
+
+// Al hacer clic en el botón "Eliminar"
+document.querySelector(".btn-eliminar").addEventListener("click", () => {
+    if (!filaSeleccionadaIzquierda) {
+        alert("Por favor, selecciona un producto antes de eliminar.");
+        return;
+    }
+
+    // Preguntar al usuario si está seguro de eliminar
+    const confirmarEliminacion = confirm("¿Estás seguro de que deseas eliminar este producto?");
+
+    if (confirmarEliminacion) {
+        // Obtener datos de la fila seleccionada
+        const idProducto = filaSeleccionadaIzquierda.querySelector("td:nth-child(1)").textContent.trim();
+        const cantidadEliminada = parseInt(filaSeleccionadaIzquierda.querySelector("td:nth-child(3)").textContent.trim(), 10);
+
+        // Eliminar la fila de la tabla izquierda
+        filaSeleccionadaIzquierda.remove();
+        filaSeleccionadaIzquierda = null;
+
+        // Actualizar el stock en la tabla derecha
+        const tablaDerecha = document.querySelector("#productosLista");
+        const filaProductoDerecha = Array.from(tablaDerecha.querySelectorAll("tr")).find(
+            fila => fila.querySelector("td:nth-child(1)").textContent.trim() === idProducto
+        );
+
+        if (filaProductoDerecha) {
+            const stockActual = parseInt(filaProductoDerecha.querySelector("td:nth-child(4)").textContent.trim(), 10);
+            filaProductoDerecha.querySelector("td:nth-child(4)").textContent = stockActual + cantidadEliminada;
+
+            // Rehabilitar la fila si estaba agotada
+            filaProductoDerecha.classList.remove("out-of-stock");
+        }
+
+        alert("Producto eliminado correctamente.");
+    } else {
+        alert("Operación cancelada.");
+    }
+});
+
+// Agregar al carrito
+function agregarAlCarrito(producto, cantidad) {
+    const tablaCarrito = document.querySelector("#tabla tbody");
+    const filaExistente = Array.from(tablaCarrito.querySelectorAll("tr")).find(
+        fila => fila.querySelector("td:nth-child(1)").textContent.trim() === producto.id
+    );
+    if (filaExistente) {
+        const cantidadActual = parseInt(filaExistente.querySelector("td:nth-child(3)").textContent.trim(), 10);
+        filaExistente.querySelector("td:nth-child(3)").textContent = cantidadActual + cantidad;
+    } else {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+            <td>${producto.id}</td>
+            <td>${producto.nombre}</td>
+            <td>${producto.precio}</td>
+            <td>${cantidad}</td>
+        `;
+        tablaCarrito.appendChild(fila);
+    }
+}
+
+// Calcular el monto total
+const totalMontoSpan = document.getElementById("totalMonto");
+const vueltoMontoSpan = document.getElementById("vueltoMonto");
+const montoPagoInput = document.getElementById("montoPago");
+
+
+
+const calcularMontoTotal = () => {
+    const tablaCarrito = document.querySelector("#tabla tbody");
+    let total = 0;
+    let detallesVenta = [];
+
+    tablaCarrito.querySelectorAll("tr").forEach(fila => {
+        const cantidad = parseInt(fila.querySelector("td:nth-child(4)").textContent.trim(), 10);
+        const precioUnitario = parseFloat(fila.querySelector("td:nth-child(3)").textContent.trim());
+        total += cantidad * precioUnitario;
+        detallesVenta.push({
+            producto: {
+                idProducto: fila.querySelector("td:nth-child(1)").textContent.trim(),
+                nombre: fila.querySelector("td:nth-child(2)").textContent.trim()
+            },
+            cantProd: cantidad,
+            importe: precioUnitario * cantidad
+        });
+    });
+
+    totalMontoSpan.textContent = total.toFixed(2);
+    calcularVuelto();
+    return detallesVenta;
+};
+
+
+// Función para actualizar el stock de los productos después de la venta
+const actualizarStockProductos = async (detallesVenta) => {
+    try {
+        // Iterar sobre los detalles de la venta para actualizar el stock de cada producto
+        for (const detalle of detallesVenta) {
+            const idProducto = parseInt(detalle.producto.idProducto);
+            const cantidadVendida = detalle.cantProd;
+
+            // Realizar la solicitud para obtener el stock actual del producto
+            const responseProducto = await fetch('/Producto/ObtenerStock?idProducto=' + idProducto);
+            const dataProducto = await responseProducto.json();
+
+            if (responseProducto.ok) {
+                const stockActual = dataProducto.stock; // Stock actual del producto
+
+                // Calcular el nuevo stock
+                const nuevoStock = stockActual - cantidadVendida;
+
+                // Enviar la actualización del stock al backend
+                const responseActualizar = await fetch('/Producto/ActualizarStock', {
+                method: "POST", // O PUT, dependiendo de cómo lo maneje tu API
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ 
+                    idProducto: idProducto, 
+                    stock: nuevoStock 
+                }),
+            });
+
+                if (!responseActualizar.ok) {
+                    const error = await responseActualizar.text();
+                    console.error(`Error al actualizar stock del producto ${idProducto}`,error);
+                } else {
+                    console.log(`Stock actualizado para el producto: ${idProducto}`);
+                }
+            } else {
+                console.error(`Error al obtener stock para el producto ${idProducto}`);
+            }
+        }
+    } catch (error) {
+        console.error(`Error al actualizar el stock:`, error);
+        alert("Ocurrió un error al actualizar el stock.");
+    }
+};
+
+const calcularVuelto = () => {
+    const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
+    const montoPago = parseFloat(montoPagoInput.value) || 0;
+    const vuelto = montoPago - montoTotal;
+    vueltoMontoSpan.textContent = vuelto >= 0 ? vuelto.toFixed(2) : "0.00";
+};
+
+
+// Procesar el pago
+document.getElementById("procesarPago").addEventListener("click", async () => {
+    const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
+    const montoPago = parseFloat(montoPagoInput.value) || 0;
+    if (montoPago < montoTotal) {
+        alert("El monto de pago no cubre el total. Por favor, ingrese un monto válido.");
+        return;
+    }
+    if (!idClienteInput.value) {
+        alert("Debe seleccionar un cliente.");
+        return;
+    }
+
+    const detallesVenta = calcularMontoTotal();
+    const datosVenta = {
+        precioTotal: montoTotal,
+        fechaRegistro: new Date().toISOString(),
+        estado: true,
+        usuario: { idUsuario: 1 },
+        persona: { idPersona: parseInt(idClienteInput.value) },
+        detalleVentas: detallesVenta.map(detalle => ({
+            ...detalle,
+            venta: { idVenta: null },
+            estado: true
+        }))
+    };
+
+    try {
+        const response = await fetch('/Ventas/Guardar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer <tu-token>',
+            },
+            body: JSON.stringify(datosVenta)
+        });
+
+        
+        if (response.ok) {
+            const venta = await response.json();
+            const idVenta = venta.idVenta;
+            id_venta=idVenta;
+            await Promise.all(detallesVenta.map(async detalle => {
+                detalle.venta = { idVenta: idVenta };
+                await fetch('/Detalle_Ventas/Guardar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer <tu-token>',
+                    },
+                    body: JSON.stringify(detalle)
+                });
+            }));
+
+            alert("Venta realizada correctamente.");
+            // Actualizar el stock después de guardar la venta
+            await actualizarStockProductos(detallesVenta);
+            generarBoletaPDF(idVenta, montoTotal);
+            
+        } else {
+            alert("Error al procesar la venta.");
+        }
+    } catch (error) {
+        console.error(`Error al procesar la venta:`, error);
+        alert("Ocurrió un error al procesar la venta.");
+    }
+});
+
+
+// Generar Boleta PDF
+function generarBoletaPDF(idVenta, total) {
+    const montoTotal = parseFloat(totalMontoSpan.textContent) || 0;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', [80, 200]);
+    
+ // Título del ticket
+    doc.setFont('Times', 'bold');
+    doc.setFontSize(14);
+    doc.text('MINIMARKET J Y K', 40, 10, { align: 'center' });
+    
+ // Información de la venta
+    doc.setFontSize(10);
+    doc.text(`RUC: `, 40, 15, { align: 'center' });
+    doc.text(`Direccion: `, 40, 20, { align: 'center' });
+    doc.text(`Telefono: `, 40, 25, { align: 'center' });
+    doc.text(`BOLETA DE VENTA ELECTRONICA `, 40, 30, { align: 'center' });
+    //doc.text(`BOLETA N°: ${id_venta}`, 40, 35, { align: 'center' });
+    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 40, 40, { align: 'center' });
+ // Información del cliente
+    doc.setFontSize(8);
+    doc.text(`Cliente: ${clienteSeleccionado ? clienteSeleccionado.nombres : 'N/A'}`, 5, 45);
+    doc.text(`DNI: ${clienteSeleccionado ? clienteSeleccionado.dni : 'N/A'}`, 5, 50);
+
+ // Línea separadora
+    doc.setLineWidth(0.5);
+    doc.line(5, 55, 75, 55); // Ajustar la línea según el nuevo tamaño
+    
+ // Cabecera de la tabla de productos
+    doc.setFont('Times', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255); // Color de texto blanco
+    doc.setFillColor(133, 193, 233); // Color de fondo (similar al Java)
+    doc.rect(5, 56, 70, 13, 'F'); // Fondo de la celda
+    
+    //let yPosition = 55;
+    doc.text('Producto', 7, 65);
+    doc.text('Cantidad', 35, 65);
+    doc.text('Precio', 70, 65, { align: 'right' });
+    
+ // Línea debajo de la cabecera
+    doc.setLineWidth(0.5);
+    doc.line(5, 70, 75, 70);
+
+ // Detalles de los productos
+    let yPosition = 75;
+    const carrito = Array.from(document.querySelectorAll("#tabla tbody tr")).map(row => {
+        
+        return {
+            producto: {
+                nombre: row.querySelector("td:nth-child(2)").textContent,
+                precio:row.querySelector("td:nth-child(3)").textContent
+            },
+            cantidad: row.querySelector("td:nth-child(4)").textContent,
+            total: (parseFloat(row.querySelector("td:nth-child(3)").textContent) * parseInt(row.querySelector("td:nth-child(4)").textContent)).toFixed(2)
+        };
+    });
+
+    carrito.forEach(item => {
+        doc.setTextColor(0, 0, 0); // Texto negro
+        doc.text(item.producto.nombre, 7, yPosition);
+        doc.text(item.cantidad, 35, yPosition);
+        doc.text(`$${item.producto.precio}`, 70, yPosition, { align: 'right' });
+        yPosition += 5;
+    });
+    
+ // Línea separadora entre la tabla de productos y el total
+    doc.setLineWidth(0.5);
+    doc.line(5, yPosition, 75, yPosition);
+
+ // Total
+    doc.setFontSize(10);
+    yPosition += 10;
+    doc.text(`Total: $${montoTotal.toFixed(2)}`, 10, yPosition);
+    
+ // Pie de la boleta
+    yPosition += 10;
+    doc.setFontSize(8);
+    doc.text('¡Gracias por su compra!', 40, yPosition + 10, { align: 'center' });
+
+    const pdfData = doc.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfData);
+    window.open(pdfUrl, '_blank');
+}
+});
+</script>
 
 </body>
 

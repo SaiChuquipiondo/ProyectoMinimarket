@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.entity.Categoria;
-import com.example.demo.entity.Persona;
 import com.example.demo.entity.Producto;
 import com.example.demo.service.ProductoService;
 
@@ -87,35 +85,35 @@ public class ProductoController {
 		model.addAttribute("producto", listarProductos);
 		return "Admin/Producto/ControldeStock";
 	}
-	
+
 	// Método para obtener el stock actual de un producto
-    @GetMapping("/ObtenerStock")
-    @ResponseBody
-    public ResponseEntity<?> obtenerStock(@RequestParam("idProducto") int idProducto) {
-        Producto producto = productoService.buscarProducto(idProducto);
-        if (producto != null) {
-            return ResponseEntity.ok(Map.of("stock", producto.getStock()));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
-        }
-    }
+	@GetMapping("/ObtenerStock")
+	@ResponseBody
+	public ResponseEntity<?> obtenerStock(@RequestParam("idProducto") int idProducto) {
+		Producto producto = productoService.buscarProducto(idProducto);
+		if (producto != null) {
+			return ResponseEntity.ok(Map.of("stock", producto.getStock()));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
+		}
+	}
 
-    // Método para actualizar el stock de un producto
-    @PostMapping("/ActualizarStock")
-    @ResponseBody
-    public ResponseEntity<?> actualizarStock(@RequestBody Map<String, Object> request) {
-        int idProducto = (Integer) request.get("idProducto");
-        int stock = (Integer) request.get("stock");
-        
-        Producto producto = productoService.buscarProducto(idProducto);
-        if (producto != null) {
-            producto.setStock(stock);
-            productoService.editarProducto(producto);  // Suponiendo que este método guarda el producto con el nuevo stock
-            return ResponseEntity.ok(producto);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
-        }
-    }
+	// Método para actualizar el stock de un producto
+	@PostMapping("/ActualizarStock")
+	@ResponseBody
+	public ResponseEntity<?> actualizarStock(@RequestBody Map<String, Object> request) {
+		int idProducto = (Integer) request.get("idProducto");
+		int stock = (Integer) request.get("stock");
 
+		Producto producto = productoService.buscarProducto(idProducto);
+		if (producto != null) {
+			producto.setStock(stock);
+			productoService.editarProducto(producto); // Suponiendo que este método guarda el producto con el nuevo
+														// stock
+			return ResponseEntity.ok(producto);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
+		}
+	}
 
 }
